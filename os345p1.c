@@ -31,7 +31,7 @@ extern jmp_buf reset_context;
 // -----
 
 
-#define NUM_COMMANDS 49
+#define NUM_COMMANDS 50
 typedef struct								// command struct
 {
 	char* command;
@@ -201,6 +201,24 @@ int P1_help(int argc, char* argv[])
 	return 0;
 } // end P1_help
 
+// ***********************************************************************
+// ***********************************************************************
+// args command
+//
+int P1_args(int argc, char* argv[])
+{
+	int i;
+
+	// list commands
+	for (i = 1; i < argc; i++)
+	{
+		SWAP										// do context switch
+		printf("\n%s", "test");
+	}
+
+	return 0;
+} // end P1_args
+
 
 // ***********************************************************************
 // ***********************************************************************
@@ -243,6 +261,7 @@ Command** P1_init()
 	commands[i++] = newCommand("project1", "p1", P1_project1, "P1: Shell");
 	commands[i++] = newCommand("help", "he", P1_help, "OS345 Help");
 	commands[i++] = newCommand("lc3", "lc3", P1_lc3, "Execute LC3 program");
+	commands[i++] = newCommand("args", "args", P1_args, "List all command line parameters given (numbers and strings)");
 
 	// P2: Tasking
 	commands[i++] = newCommand("project2", "p2", P2_project2, "P2: Tasking");
