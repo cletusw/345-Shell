@@ -73,6 +73,7 @@ Command* newCommand(char*, char*, int (*func)(int, char**), char*);
 int P1_shellTask(int argc, char* argv[])
 {
 	int i, found, newArgc;					// # of arguments
+	static char* argvStrings;
 	char** newArgv;							// pointers to arguments
 
 	// initialize shell commands
@@ -94,11 +95,15 @@ int P1_shellTask(int argc, char* argv[])
 			// ?? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 			// ?? parse command line into argc, argv[] variables
 			// ?? must use malloc for argv storage!
+			// ?? convert all unquoted strings (including command itself) to lowercase
 			static char *sp, *myArgv[MAX_ARGS];
+			
+			argvStrings = (char*) malloc(sizeof(char) * (strlen(inBuffer) + 1));
+			strcpy(argvStrings, inBuffer);
 
 			// init arguments
 			newArgc = 1;
-			myArgv[0] = sp = inBuffer;				// point to input string
+			myArgv[0] = sp = argvStrings;				// point to input string
 			for (i=1; i<MAX_ARGS; i++)
 				myArgv[i] = 0;
 
@@ -126,7 +131,9 @@ int P1_shellTask(int argc, char* argv[])
 		}
 		if (!found)	printf("\nInvalid command!");
 
-		// ?? free up any malloc'd argv parameters
+		// free up any malloc'd argv parameters
+		free (argvStrings);
+		
 		for (i=0; i<INBUF_SIZE; i++) inBuffer[i] = 0;
 	}
 	return 0;						// terminate task
