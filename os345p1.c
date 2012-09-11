@@ -213,7 +213,7 @@ int P1_args(int argc, char* argv[])
 	for (i = 1; i < argc; i++)
 	{
 		SWAP										// do context switch
-		printf("\n%s", "test");
+		printf("\n%s", argv[i]);
 	}
 
 	return 0;
