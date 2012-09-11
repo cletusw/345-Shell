@@ -1,4 +1,4 @@
-shell:
+shell: os345p1.c
 	gcc *.c -o shell
 
 clean:
