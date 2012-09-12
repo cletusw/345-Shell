@@ -199,6 +199,17 @@ static void keyboard_isr()
 				semSignal(inBufferReady);	// SIGNAL(inBufferReady)
 				break;
 			}
+			
+			// Backspace
+			case 0x7f:
+			{
+				if (inBufIndx > 0) {
+					inBufIndx--;
+					inBuffer[inBufIndx] = 0;
+					printf("\b \b");		// remove last character
+				}
+				break;
+			}
 
 			case 0x18:						// ^x
 			{
