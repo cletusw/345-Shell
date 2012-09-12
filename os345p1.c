@@ -275,7 +275,10 @@ int P1_add(int argc, char* argv[])
 //
 int P1_date(int argc, char* argv[])
 {
-	printf("\n%s", "Date Time");
+	time_t rawtime;
+
+	time(&rawtime);
+	printf("\n%s", asctime(localtime(&rawtime)));
 
 	return 0;
 } // end P1_date
