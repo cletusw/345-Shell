@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <setjmp.h>
 #include <assert.h>
+#include <time.h>
 #include "os345.h"
 
 // The 'reset_context' comes from 'main' in os345.c.  Proper shut-down
@@ -31,7 +32,7 @@ extern jmp_buf reset_context;
 // -----
 
 
-#define NUM_COMMANDS 51
+#define NUM_COMMANDS 52
 typedef struct								// command struct
 {
 	char* command;
@@ -268,6 +269,17 @@ int P1_add(int argc, char* argv[])
 	return 0;
 } // end P1_add
 
+// ***********************************************************************
+// ***********************************************************************
+// date command
+//
+int P1_date(int argc, char* argv[])
+{
+	printf("\n%s", "Date Time");
+
+	return 0;
+} // end P1_date
+
 
 // ***********************************************************************
 // ***********************************************************************
@@ -312,6 +324,7 @@ Command** P1_init()
 	commands[i++] = newCommand("lc3", "lc3", P1_lc3, "Execute LC3 program");
 	commands[i++] = newCommand("args", "args", P1_args, "List all command line parameters given (numbers and strings)");
 	commands[i++] = newCommand("add", "add", P1_add, "Add all decimal or hexadecimal numbers given as command line parameters");
+	commands[i++] = newCommand("date", "date", P1_date, "Output current system date and time");
 
 	// P2: Tasking
 	commands[i++] = newCommand("project2", "p2", P2_project2, "P2: Tasking");
