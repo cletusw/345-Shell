@@ -31,7 +31,7 @@ extern jmp_buf reset_context;
 // -----
 
 
-#define NUM_COMMANDS 50
+#define NUM_COMMANDS 51
 typedef struct								// command struct
 {
 	char* command;
@@ -233,6 +233,41 @@ int P1_args(int argc, char* argv[])
 	return 0;
 } // end P1_args
 
+// ***********************************************************************
+// ***********************************************************************
+// add command
+//
+int P1_add(int argc, char* argv[])
+{
+	int i;
+	long int sum, arg;
+	
+	sum = 0;
+
+	// add parameters
+	for (i = 1; i < argc; i++)
+	{
+		SWAP										// do context switch
+		
+		// Check for hexadecimal number
+		if (argv[i][0] == '0' && (argv[i][1] == 'x' || argv[i][1] == 'X')) {
+			arg = strtol(argv[i], NULL, 16);
+		}
+		else {
+			arg = strtol(argv[i], NULL, 10);
+		}
+		
+		// TODO Check for range error
+		
+		// Add to sum
+		sum = sum + arg;
+	}
+	
+	printf("\n%ld", sum);
+
+	return 0;
+} // end P1_add
+
 
 // ***********************************************************************
 // ***********************************************************************
@@ -276,6 +311,7 @@ Command** P1_init()
 	commands[i++] = newCommand("help", "he", P1_help, "OS345 Help");
 	commands[i++] = newCommand("lc3", "lc3", P1_lc3, "Execute LC3 program");
 	commands[i++] = newCommand("args", "args", P1_args, "List all command line parameters given (numbers and strings)");
+	commands[i++] = newCommand("add", "add", P1_add, "Add all decimal or hexadecimal numbers given as command line parameters");
 
 	// P2: Tasking
 	commands[i++] = newCommand("project2", "p2", P2_project2, "P2: Tasking");
