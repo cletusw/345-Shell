@@ -92,29 +92,35 @@ int P1_shellTask(int argc, char* argv[])
 		SWAP										// do context switch
 
 		{
-			// ?? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-			// ?? parse command line into argc, argv[] variables
-			// ?? must use malloc for argv storage!
-			// ?? convert all unquoted strings (including command itself) to lowercase
-			static char *sp, *myArgv[MAX_ARGS];
+			// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+			// parse command line into argc, argv[] variables
+			// must use malloc for argv storage!
+			// convert all unquoted strings (including command itself) to lowercase
+			static char *sp;
 			
+			// Allocate space for strings
 			argvStrings = (char*) malloc(sizeof(char) * (strlen(inBuffer) + 1));
 			strcpy(argvStrings, inBuffer);
+			
+			// Allocate space for argv
+			newArgv = (char**) malloc(sizeof(char*) * MAX_ARGS);
 
 			// init arguments
 			newArgc = 1;
-			myArgv[0] = sp = argvStrings;				// point to input string
+			newArgv[0] = sp = argvStrings;				// point to input string
 			for (i=1; i<MAX_ARGS; i++)
-				myArgv[i] = 0;
+				newArgv[i] = 0;
 
 			// parse input string
 			while ((sp = strchr(sp, ' ')))
 			{
-				*sp++ = 0;
-				myArgv[newArgc++] = sp;
+				*sp = 0;
+				sp++;
+
+				newArgv[newArgc] = sp;
+				newArgc++;
 			}
-			newArgv = myArgv;
-		}	// ?? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		}	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		// look for command
 		for (found = i = 0; i < NUM_COMMANDS; i++)
@@ -132,7 +138,8 @@ int P1_shellTask(int argc, char* argv[])
 		if (!found)	printf("\nInvalid command!");
 
 		// free up any malloc'd argv parameters
-		free (argvStrings);
+		free(newArgv);
+		free(argvStrings);
 		
 		for (i=0; i<INBUF_SIZE; i++) inBuffer[i] = 0;
 	}
