@@ -203,14 +203,42 @@ int P1_lc3(int argc, char* argv[])
 //
 int P1_help(int argc, char* argv[])
 {
-	int i;
-
-	// list commands
-	for (i = 0; i < NUM_COMMANDS; i++)
-	{
-		SWAP										// do context switch
-		if (strstr(commands[i]->description, ":")) printf("\n");
-		printf("\n%4s: %s", commands[i]->shortcut, commands[i]->description);
+	int i, found;
+	char startFlag[4] = "P0:";
+	
+	// Check for given project argument
+	if (argc > 1 && (argv[1][0] == 'P' || argv[1][0] == 'p')) {
+		// List commands for given project
+		found = FALSE;
+		startFlag[1] = argv[1][1];
+		
+		// Find first command for project
+		for (i = 0; i < NUM_COMMANDS; i++)
+		{
+			SWAP										// do context switch
+			if (strstr(commands[i]->description, startFlag)) {
+				found = TRUE;
+				break;
+			}
+		}
+		
+		if (found) {
+			// List commands until next project
+			printf("\n%4s: %s", commands[i]->shortcut, commands[i]->description);
+			for (i++; i < NUM_COMMANDS; i++) {
+				if (strstr(commands[i]->description, ":")) break;
+				printf("\n%4s: %s", commands[i]->shortcut, commands[i]->description);
+			}
+		}
+	}
+	else {
+		// list all commands
+		for (i = 0; i < NUM_COMMANDS; i++)
+		{
+			SWAP										// do context switch
+			if (strstr(commands[i]->description, ":")) printf("\n");
+			printf("\n%4s: %s", commands[i]->shortcut, commands[i]->description);
+		}
 	}
 
 	return 0;
