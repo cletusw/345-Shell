@@ -705,7 +705,7 @@ static void exitTask(int taskId);
 int killTask(int taskId)
 {
 	int tid;
-	assert("killTask Error" && tcb[taskId].name);
+	assert("killTask Error" && (taskId == -1 || tcb[taskId].name));
 
 	if (taskId != 0)			// don't terminate shell
 	{

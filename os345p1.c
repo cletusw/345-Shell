@@ -56,6 +56,7 @@ Command** commands;						// shell commands
 Command** P1_init(void);
 Command* newCommand(char*, char*, int (*func)(int, char**), char*);
 void sigIntHandler(void);
+void sigTermHandler(void);
 
 // ***********************************************************************
 // myShell - command line interpreter
@@ -81,6 +82,7 @@ int P1_shellTask(int argc, char* argv[])
 
 	// Set up signal handlers
 	sigAction(&sigIntHandler, mySIGINT);
+	sigAction(&sigTermHandler, mySIGTERM);
 
 	while (1)
 	{
@@ -157,6 +159,10 @@ int P1_shellTask(int argc, char* argv[])
 void sigIntHandler(void) {
 	sigSignal(-1, mySIGTERM);
 } // end sigIntHandler
+
+void sigTermHandler(void) {
+	killTask(-1);
+} // end sigTermHandler
 
 
 // ***********************************************************************
