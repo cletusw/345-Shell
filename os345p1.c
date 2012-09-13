@@ -58,6 +58,7 @@ Command* newCommand(char*, char*, int (*func)(int, char**), char*);
 void sigIntHandler(void);
 void sigTermHandler(void);
 void sigTstpHandler(void);
+void sigContHandler(void);
 
 // ***********************************************************************
 // myShell - command line interpreter
@@ -85,6 +86,7 @@ int P1_shellTask(int argc, char* argv[])
 	sigAction(&sigIntHandler, mySIGINT);
 	sigAction(&sigTermHandler, mySIGTERM);
 	sigAction(&sigTstpHandler, mySIGTSTP);
+	sigAction(&sigContHandler, mySIGCONT);
 
 	while (1)
 	{
@@ -169,6 +171,10 @@ void sigTermHandler(void) {
 void sigTstpHandler(void) {
 	sigSignal(-1, mySIGSTOP);
 } // end sigTstpHandler
+
+void sigContHandler(void) {
+	return;
+} // end sigContHandler
 
 
 // ***********************************************************************
