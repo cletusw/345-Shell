@@ -671,13 +671,13 @@ int createTask(char* name,						// task name
 			{
 				// inherit parent signal handlers
 				tcb[tid].sigIntHandler = tcb[curTask].sigIntHandler;			// mySIGINT handler
-				tcb[tid].sigTermHandler = tcb[curTask].sigTermHandler;			// mySIGINT handler
+				tcb[tid].sigTermHandler = tcb[curTask].sigTermHandler;			// mySIGTERM handler
 			}
 			else
 			{
 				// otherwise use defaults
 				tcb[tid].sigIntHandler = defaultSigIntHandler;			// task mySIGINT handler
-				tcb[tid].sigTermHandler = defaultSigTermHandler;			// task mySIGINT handler
+				tcb[tid].sigTermHandler = defaultSigTermHandler;			// task mySIGTERM handler
 			}
 
 			// Each task must have its own stack and stack pointer.
