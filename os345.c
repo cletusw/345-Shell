@@ -689,6 +689,8 @@ int createTask(char* name,						// task name
 					char* argv[])				// task argument pointers
 {
 	int tid;
+	int i;
+	char** newArgv;
 
 	// find an open tcb entry slot
 	for (tid = 0; tid < MAX_TASKS; tid++)
@@ -714,8 +716,16 @@ int createTask(char* name,						// task name
 			tcb[tid].parent = curTask;		// parent
 			tcb[tid].argc = argc;			// argument count
 
-			// ?? malloc new argv parameters
-			tcb[tid].argv = argv;			// argument pointers
+			// Allocate space for argv
+			newArgv = (char**) malloc(sizeof(char*) * MAX_ARGS);
+			
+			// Allocate space for parameters
+			for (i = 0; i < MAX_ARGS; i++) {
+				newArgv[i] = (char*) malloc(sizeof(char) * (strlen(argv[i]) + 1));
+				strcpy(newArgv[i], argv[i]);
+			}
+			
+			tcb[tid].argv = newArgv;			// argument pointers
 
 			tcb[tid].event = 0;				// suspend semaphore
 			tcb[tid].RPT = 0;					// root page table (project 5)
