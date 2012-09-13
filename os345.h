@@ -108,7 +108,7 @@ typedef struct							// task control block
 	void (*sigIntHandler)(void);	// task mySIGINT handler
 //	void (*sigKillHandler)(void);	// task mySIGKILL handler
 	void (*sigTermHandler)(void);	// task mySIGTERM handler
-//	void (*sigTstpHandler)(void);	// task mySIGTSTP handler
+	void (*sigTstpHandler)(void);	// task mySIGTSTP handler
 	TID parent;							// task parent
 	int RPT;								// task root page table (project 5)
 	int cdir;							// task directory (project 6)

@@ -219,6 +219,12 @@ static void keyboard_isr()
 				semSignal(inBufferReady);	// SEM_SIGNAL(inBufferReady)
 				break;
 			}
+			
+			case 0x17:						// ^w
+			{
+				sigSignal(-1, mySIGTSTP);		// interrupt task 0
+				break;
+			}
 
 			default:
 			{
@@ -401,6 +407,12 @@ static int dispatcher(int curTask)
 					tcb[curTask].signal &= ~mySIGTERM;
 					(*tcb[curTask].sigTermHandler)();
 				}
+
+				if (tcb[curTask].signal & mySIGTSTP)
+				{
+					tcb[curTask].signal &= ~mySIGTSTP;
+					(*tcb[curTask].sigTstpHandler)();
+				}
 			}
 
 			longjmp(tcb[curTask].context, 3); 		// restore task context
@@ -574,6 +586,11 @@ int sigAction(void (*sigHandler)(void), int sig)
 			tcb[curTask].sigTermHandler = sigHandler;		// mySIGTERM handler
 			return 0;
 		}
+		case mySIGTSTP:
+		{
+			tcb[curTask].sigTstpHandler = sigHandler;		// mySIGTSTP handler
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -619,6 +636,12 @@ void defaultSigIntHandler(void)			// task mySIGINT handler
 void defaultSigTermHandler(void)		// task mySIGTERM handler
 {
 	printf("\ndefaultSigTermHandler");
+	return;
+}
+
+void defaultSigTstpHandler(void)		// task mySIGTSTP handler
+{
+	printf("\ndefaultSigTstpHandler");
 	return;
 }
 
@@ -672,12 +695,14 @@ int createTask(char* name,						// task name
 				// inherit parent signal handlers
 				tcb[tid].sigIntHandler = tcb[curTask].sigIntHandler;			// mySIGINT handler
 				tcb[tid].sigTermHandler = tcb[curTask].sigTermHandler;			// mySIGTERM handler
+				tcb[tid].sigTstpHandler = tcb[curTask].sigTstpHandler;			// mySIGTSTP handler
 			}
 			else
 			{
 				// otherwise use defaults
 				tcb[tid].sigIntHandler = defaultSigIntHandler;			// task mySIGINT handler
 				tcb[tid].sigTermHandler = defaultSigTermHandler;			// task mySIGTERM handler
+				tcb[tid].sigTstpHandler = defaultSigTstpHandler;			// task mySIGTSTP handler
 			}
 
 			// Each task must have its own stack and stack pointer.
