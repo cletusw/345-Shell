@@ -184,6 +184,8 @@ int main(int argc, char* argv[])
 //
 static void keyboard_isr()
 {
+	int i;
+	
 	// assert system mode
 	assert("keyboard_isr Error" && superMode);
 
@@ -223,6 +225,20 @@ static void keyboard_isr()
 			case 0x17:						// ^w
 			{
 				sigSignal(-1, mySIGTSTP);	// stop all tasks
+				break;
+			}
+			
+			case 0x12:						// ^r
+			{
+				// Resume all tasks
+				sigSignal(-1, mySIGCONT);
+				
+				// Clear mySIGSTOP and mySIGTSTP in all tasks
+				for (i = 0; i < MAX_TASKS; i++) {
+					tcb[i].signal &= ~mySIGTSTP;
+					tcb[i].signal &= ~mySIGSTOP;
+				}
+				
 				break;
 			}
 
@@ -413,6 +429,12 @@ static int dispatcher(int curTask)
 					tcb[curTask].signal &= ~mySIGTSTP;
 					(*tcb[curTask].sigTstpHandler)();
 				}
+
+				if (tcb[curTask].signal & mySIGCONT)
+				{
+					tcb[curTask].signal &= ~mySIGCONT;
+					(*tcb[curTask].sigContHandler)();
+				}
 			}
 
 			longjmp(tcb[curTask].context, 3); 		// restore task context
@@ -591,6 +613,11 @@ int sigAction(void (*sigHandler)(void), int sig)
 			tcb[curTask].sigTstpHandler = sigHandler;		// mySIGTSTP handler
 			return 0;
 		}
+		case mySIGCONT:
+		{
+			tcb[curTask].sigContHandler = sigHandler;		// mySIGCONT handler
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -645,6 +672,12 @@ void defaultSigTstpHandler(void)		// task mySIGTSTP handler
 	return;
 }
 
+void defaultSigContHandler(void)		// task mySIGCONT handler
+{
+	printf("\ndefaultSigContHandler");
+	return;
+}
+
 
 // **********************************************************************
 // **********************************************************************
@@ -696,6 +729,7 @@ int createTask(char* name,						// task name
 				tcb[tid].sigIntHandler = tcb[curTask].sigIntHandler;			// mySIGINT handler
 				tcb[tid].sigTermHandler = tcb[curTask].sigTermHandler;			// mySIGTERM handler
 				tcb[tid].sigTstpHandler = tcb[curTask].sigTstpHandler;			// mySIGTSTP handler
+				tcb[tid].sigContHandler = tcb[curTask].sigContHandler;			// mySIGCONT handler
 			}
 			else
 			{
@@ -703,6 +737,7 @@ int createTask(char* name,						// task name
 				tcb[tid].sigIntHandler = defaultSigIntHandler;			// task mySIGINT handler
 				tcb[tid].sigTermHandler = defaultSigTermHandler;			// task mySIGTERM handler
 				tcb[tid].sigTstpHandler = defaultSigTstpHandler;			// task mySIGTSTP handler
+				tcb[tid].sigContHandler = defaultSigContHandler;			// task mySIGCONT handler
 			}
 
 			// Each task must have its own stack and stack pointer.
