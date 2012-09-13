@@ -222,7 +222,7 @@ static void keyboard_isr()
 			
 			case 0x17:						// ^w
 			{
-				sigSignal(-1, mySIGTSTP);		// interrupt task 0
+				sigSignal(-1, mySIGTSTP);	// stop all tasks
 				break;
 			}
 
