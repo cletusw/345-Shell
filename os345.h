@@ -246,6 +246,9 @@ int P1_shellTask(int, char**);
 int P1_help(int, char**);
 int P1_quit(int, char**);
 int P1_lc3(int, char**);
+int P1_args(int, char**);
+int P1_add(int, char**);
+int P1_date(int, char**);
 
 int P2_project2(int, char**);
 int P2_killTask(int, char**);
