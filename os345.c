@@ -395,6 +395,12 @@ static int dispatcher(int curTask)
 					tcb[curTask].signal &= ~mySIGINT;
 					(*tcb[curTask].sigIntHandler)();
 				}
+
+				if (tcb[curTask].signal & mySIGTERM)
+				{
+					tcb[curTask].signal &= ~mySIGTERM;
+					(*tcb[curTask].sigTermHandler)();
+				}
 			}
 
 			longjmp(tcb[curTask].context, 3); 		// restore task context
@@ -563,6 +569,11 @@ int sigAction(void (*sigHandler)(void), int sig)
 			tcb[curTask].sigIntHandler = sigHandler;		// mySIGINT handler
 			return 0;
 		}
+		case mySIGTERM:
+		{
+			tcb[curTask].sigTermHandler = sigHandler;		// mySIGTERM handler
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -602,6 +613,12 @@ int sigSignal(int taskId, int sig)
 void defaultSigIntHandler(void)			// task mySIGINT handler
 {
 	printf("\ndefaultSigIntHandler");
+	return;
+}
+
+void defaultSigTermHandler(void)		// task mySIGTERM handler
+{
+	printf("\ndefaultSigTermHandler");
 	return;
 }
 
@@ -654,11 +671,13 @@ int createTask(char* name,						// task name
 			{
 				// inherit parent signal handlers
 				tcb[tid].sigIntHandler = tcb[curTask].sigIntHandler;			// mySIGINT handler
+				tcb[tid].sigTermHandler = tcb[curTask].sigTermHandler;			// mySIGINT handler
 			}
 			else
 			{
 				// otherwise use defaults
 				tcb[tid].sigIntHandler = defaultSigIntHandler;			// task mySIGINT handler
+				tcb[tid].sigTermHandler = defaultSigTermHandler;			// task mySIGINT handler
 			}
 
 			// Each task must have its own stack and stack pointer.

@@ -55,7 +55,7 @@ Command** commands;						// shell commands
 // project 1 prototypes
 Command** P1_init(void);
 Command* newCommand(char*, char*, int (*func)(int, char**), char*);
-
+void sigIntHandler(void);
 
 // ***********************************************************************
 // myShell - command line interpreter
@@ -78,6 +78,9 @@ int P1_shellTask(int argc, char* argv[])
 
 	// initialize shell commands
 	commands = P1_init();					// init shell commands
+
+	// Set up signal handlers
+	sigAction(&sigIntHandler, mySIGINT);
 
 	while (1)
 	{
@@ -145,6 +148,15 @@ int P1_shellTask(int argc, char* argv[])
 	}
 	return 0;						// terminate task
 } // end P1_shellTask
+
+
+// ***********************************************************************
+// ***********************************************************************
+// Signal Handlers
+//
+void sigIntHandler(void) {
+	sigSignal(-1, mySIGTERM);
+} // end sigIntHandler
 
 
 // ***********************************************************************
