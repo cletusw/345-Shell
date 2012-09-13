@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <setjmp.h>
 #include <assert.h>
-#include <time.h>
 #include "os345.h"
 
 // The 'reset_context' comes from 'main' in os345.c.  Proper shut-down
@@ -303,10 +302,9 @@ int P1_add(int argc, char* argv[])
 //
 int P1_date(int argc, char* argv[])
 {
-	time_t rawtime;
+	char time[30];
 
-	time(&rawtime);
-	printf("\n%s", asctime(localtime(&rawtime)));
+	printf("\n%s", myTime(&time));
 
 	return 0;
 } // end P1_date
