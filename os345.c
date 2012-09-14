@@ -717,10 +717,10 @@ int createTask(char* name,						// task name
 			tcb[tid].argc = argc;			// argument count
 
 			// Allocate space for argv
-			newArgv = (char**) malloc(sizeof(char*) * MAX_ARGS);
+			newArgv = (char**) malloc(sizeof(char*) * argc);
 			
 			// Allocate space for parameters
-			for (i = 0; i < MAX_ARGS; i++) {
+			for (i = 0; i < argc; i++) {
 				newArgv[i] = (char*) malloc(sizeof(char) * (strlen(argv[i]) + 1));
 				strcpy(newArgv[i], argv[i]);
 			}
@@ -774,7 +774,8 @@ int createTask(char* name,						// task name
 static void exitTask(int taskId);
 int killTask(int taskId)
 {
-	int tid;
+	int tid, i;
+	char** argv;
 	assert("killTask Error" && (taskId == -1 || tcb[taskId].name));
 
 	if (taskId != 0)			// don't terminate shell
@@ -783,13 +784,29 @@ int killTask(int taskId)
 		{
 			for (tid = 0; tid < MAX_TASKS; tid++)
 			{
-				if (tcb[tid].name) exitTask(tid);
+				if (tcb[tid].name) {
+					exitTask(tid);
+					
+					// Free argv
+					argv = tcb[taskId].argv;
+					for (i = 0; i < tcb[taskId].argc && argv[i]; i++) {
+						free(argv[i]);
+					}
+					free(argv);
+				}
 			}
 		}
 		else
 		{
 			// terminate individual task
 			exitTask(taskId);	// kill individual task
+			
+			// Free argv
+			argv = tcb[taskId].argv;
+			for (i = 0; i < tcb[taskId].argc && argv[i]; i++) {
+				free(argv[i]);
+			}
+			free(argv);
 		}
 	}
 	if (!superMode) SWAP;
@@ -803,8 +820,7 @@ static void exitTask(int taskId)
 	// 1. find task in system queue
 	// 2. if blocked, unblock (handle semaphore)
 	// 3. set state to exit
-
-	// ?? add code here...
+	
 	tcb[taskId].state = S_EXIT;			// EXIT task state
 
 	return;
