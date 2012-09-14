@@ -137,9 +137,19 @@ int P1_shellTask(int argc, char* argv[])
 			if (!strcmp(newArgv[0], commands[i]->command) ||
 				 !strcmp(newArgv[0], commands[i]->shortcut))
 			{
-				// command found
-				int retValue = (*commands[i]->func)(newArgc, newArgv);
-				if (retValue) printf("\nCommand Error %d", retValue);
+				// command found, check for background &
+				if (*newArgv[newArgc-1] == '&') {
+					createTask("BackgroundTask",
+						commands[i]->func,
+						MED_PRIORITY,
+						newArgc,
+						newArgv);
+				}
+				else {
+					int retValue = (*commands[i]->func)(newArgc, newArgv);
+					if (retValue) printf("\nCommand Error %d", retValue);
+				}
+				
 				found = TRUE;
 				break;
 			}
