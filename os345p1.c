@@ -45,10 +45,14 @@ typedef struct								// command struct
 //
 extern long swapCount;					// number of scheduler cycles
 extern char inBuffer[];					// character input buffer
+extern int inBufIndx;					// input pointer into input buffer
 extern Semaphore* inBufferReady;		// input buffer ready semaphore
 extern bool diskMounted;				// disk has been mounted
 extern char dirPath[];					// directory path
 Command** commands;						// shell commands
+#define MAX_HISTORY_ENTRIES 10
+char* history[MAX_HISTORY_ENTRIES];		// Circular array of inBuffer history
+int lastCommandIndx;					// Index in history of last entry, inits to 0
 
 
 // ***********************************************************************
@@ -76,6 +80,7 @@ void sigContHandler(void);
 int P1_shellTask(int argc, char* argv[])
 {
 	int i, found, newArgc;					// # of arguments
+	int promptWithCommand = -1;
 	static char* argvStrings;
 	char** newArgv;							// pointers to arguments
 
@@ -91,8 +96,21 @@ int P1_shellTask(int argc, char* argv[])
 	while (1)
 	{
 		// output prompt
-		if (diskMounted) printf("\n%s>>", dirPath);
-		else printf("\n%ld>>", swapCount);
+		if (promptWithCommand >= 0) {
+			printf("\33[2K\r");
+		}
+		else {
+			printf("\n");
+		}
+
+		if (diskMounted) printf("%s>>", dirPath);
+		else printf("%ld>>", swapCount);
+
+		if (promptWithCommand >= 0) {
+			printf("%s", history[promptWithCommand]);
+			strcpy(inBuffer, history[promptWithCommand]);
+			inBufIndx = strlen(inBuffer);
+		}
 
 		SEM_WAIT(inBufferReady);			// wait for input buffer semaphore
 		if (!inBuffer[0]) continue;		// ignore blank lines
@@ -156,6 +174,7 @@ int P1_shellTask(int argc, char* argv[])
 		}	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		// Check for up/down arrow
+
 		int len;
 		len = strlen(inBuffer);
 		found = FALSE;
@@ -164,6 +183,7 @@ int P1_shellTask(int argc, char* argv[])
 				case 0x41:
 				{
 					// Up
+					promptWithCommand = 1;
 					found = TRUE;
 					break;
 				}
@@ -174,9 +194,25 @@ int P1_shellTask(int argc, char* argv[])
 					found = TRUE;
 					break;
 				}
+				default:
+				{
+					// Clear promptWithCommand
+					promptWithCommand = -1;
+				}
 			}
 		}
 		else {
+			// Store in history
+			lastCommandIndx = (lastCommandIndx + 1) % MAX_HISTORY_ENTRIES;
+			if (history[lastCommandIndx]) {
+				free(history[lastCommandIndx]);
+			}
+			history[lastCommandIndx] = (char*) malloc(sizeof(char) * (strlen(inBuffer) + 1));
+			strcpy(history[lastCommandIndx], inBuffer);
+
+			// Clear promptWithCommand
+			promptWithCommand = -1;
+
 			// look for command
 			for (i = 0; i < NUM_COMMANDS; i++)
 			{
@@ -206,9 +242,15 @@ int P1_shellTask(int argc, char* argv[])
 		// free up any malloc'd argv parameters
 		free(newArgv);
 		free(argvStrings);
-		
+
 		for (i=0; i<INBUF_SIZE; i++) inBuffer[i] = 0;
 	}
+
+	// Free history
+	for (i = 0; i < MAX_HISTORY_ENTRIES; i++) {
+		if (history[i]) free(history[i]);
+	}
+
 	return 0;						// terminate task
 } // end P1_shellTask
 
