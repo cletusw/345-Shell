@@ -117,6 +117,11 @@ int P1_shellTask(int argc, char* argv[])
 			// init arguments
 			newArgc = 1;
 			newArgv[0] = sp = argvStrings;				// point to input string
+			
+			for (i=0; sp[i] && sp[i] != ' '; i++) {
+				sp[i] = tolower(sp[i]);
+			}
+			
 			for (i=1; i<MAX_ARGS; i++)
 				newArgv[i] = 0;
 
@@ -141,6 +146,9 @@ int P1_shellTask(int argc, char* argv[])
 					sp++;
 				}
 				else {
+					for (i=0; sp[i] && sp[i] != ' '; i++) {
+						sp[i] = tolower(sp[i]);
+					}
 					newArgv[newArgc] = sp;
 					newArgc++;
 				}
