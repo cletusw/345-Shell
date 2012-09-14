@@ -125,9 +125,25 @@ int P1_shellTask(int argc, char* argv[])
 			{
 				*sp = 0;
 				sp++;
-
-				newArgv[newArgc] = sp;
-				newArgc++;
+				
+				if (*sp == '\'') {
+					newArgv[newArgc] = sp+1;
+					newArgc++;
+					sp = strchr(sp+1, '\'');
+					*sp = 0;
+					sp++;
+				}
+				else if (*sp == '"') {
+					newArgv[newArgc] = sp+1;
+					newArgc++;
+					sp = strchr(sp+1, '"');
+					*sp = 0;
+					sp++;
+				}
+				else {
+					newArgv[newArgc] = sp;
+					newArgc++;
+				}
 			}
 		}	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
