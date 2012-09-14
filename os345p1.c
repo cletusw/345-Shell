@@ -183,7 +183,7 @@ int P1_shellTask(int argc, char* argv[])
 		// Check for up/down arrow
 		if (inBuffer[len-3] == 0x1b && inBuffer[len-2] == 0x5b) {
 			int next;
-			
+
 			switch (inBuffer[len-1]) {
 				case 0x41:	// Up
 				{
