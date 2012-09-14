@@ -155,27 +155,50 @@ int P1_shellTask(int argc, char* argv[])
 			}
 		}	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-		// look for command
-		for (found = i = 0; i < NUM_COMMANDS; i++)
-		{
-			if (!strcmp(newArgv[0], commands[i]->command) ||
-				 !strcmp(newArgv[0], commands[i]->shortcut))
+		// Check for up/down arrow
+		int len;
+		len = strlen(inBuffer);
+		found = FALSE;
+		if (inBuffer[len-3] == 0x1b && inBuffer[len-2] == 0x5b) {
+			switch (inBuffer[len-1]) {
+				case 0x41:
+				{
+					// Up
+					found = TRUE;
+					break;
+				}
+
+				case 0x42:
+				{
+					// Down
+					found = TRUE;
+					break;
+				}
+			}
+		}
+		else {
+			// look for command
+			for (i = 0; i < NUM_COMMANDS; i++)
 			{
-				// command found, check for background &
-				if (*newArgv[newArgc-1] == '&') {
-					createTask("BackgroundTask",
-						commands[i]->func,
-						MED_PRIORITY,
-						newArgc,
-						newArgv);
+				if (!strcmp(newArgv[0], commands[i]->command) ||
+					 !strcmp(newArgv[0], commands[i]->shortcut))
+				{
+					// command found, check for background &
+					if (*newArgv[newArgc-1] == '&') {
+						createTask("BackgroundTask",
+							commands[i]->func,
+							MED_PRIORITY,
+							newArgc,
+							newArgv);
+					}
+					else {
+						int retValue = (*commands[i]->func)(newArgc, newArgv);
+						if (retValue) printf("\nCommand Error %d", retValue);
+					}
+
+					found = TRUE;
+					break;
 				}
-				else {
-					int retValue = (*commands[i]->func)(newArgc, newArgv);
-					if (retValue) printf("\nCommand Error %d", retValue);
-				}
-				
-				found = TRUE;
-				break;
 			}
 		}
 		if (!found)	printf("\nInvalid command!");
