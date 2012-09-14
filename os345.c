@@ -241,6 +241,29 @@ static void keyboard_isr()
 				
 				break;
 			}
+			
+			case 0x1b:
+			{
+				GET_CHAR;
+				char upDown = GET_CHAR;
+				if (upDown == 'A') {
+					// Move up in the command history
+					printf("u\b");
+				}
+				else if (upDown == 'B') {
+					// Move down in the command history
+					printf("d\b");
+				}
+				else {
+					// Clear entered text
+					inBuffer[0] = 0;
+					while (inBufIndx > 0) {
+						inBufIndx--;
+						printf("\b \b");
+					}
+				}
+				break;
+			}
 
 			default:
 			{
