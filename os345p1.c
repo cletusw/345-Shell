@@ -113,7 +113,10 @@ int P1_shellTask(int argc, char* argv[])
 		}
 
 		SEM_WAIT(inBufferReady);			// wait for input buffer semaphore
-		if (!inBuffer[0]) continue;		// ignore blank lines
+		if (!inBuffer[0]) {
+			promptWithCommand = -1;
+			continue;		// ignore blank lines
+		}
 		// printf("%s", inBuffer);
 
 		SWAP										// do context switch
@@ -173,21 +176,28 @@ int P1_shellTask(int argc, char* argv[])
 			}
 		}	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-		// Check for up/down arrow
-
 		int len;
 		len = strlen(inBuffer);
 		found = FALSE;
+
+		// Check for up/down arrow
 		if (inBuffer[len-3] == 0x1b && inBuffer[len-2] == 0x5b) {
+			int next;
+			
 			switch (inBuffer[len-1]) {
 				case 0x41:	// Up
 				{
 					// Go back in history
 					if (promptWithCommand < 0) {
-						promptWithCommand = lastCommandIndx;
+						next = lastCommandIndx;
 					}
 					else {
-						promptWithCommand = (promptWithCommand - 1) % MAX_HISTORY_ENTRIES;
+						next = (promptWithCommand - 1);
+						if (next < 0) next = MAX_HISTORY_ENTRIES - 1;
+					}
+
+					if (history[next]) {
+						promptWithCommand = next;
 					}
 
 					found = TRUE;
