@@ -180,17 +180,23 @@ int P1_shellTask(int argc, char* argv[])
 		found = FALSE;
 		if (inBuffer[len-3] == 0x1b && inBuffer[len-2] == 0x5b) {
 			switch (inBuffer[len-1]) {
-				case 0x41:
+				case 0x41:	// Up
 				{
-					// Up
-					promptWithCommand = 1;
+					// Go back in history
+					if (promptWithCommand < 0) {
+						promptWithCommand = lastCommandIndx;
+					}
+					else {
+						promptWithCommand = (promptWithCommand - 1) % MAX_HISTORY_ENTRIES;
+					}
+
 					found = TRUE;
 					break;
 				}
 
-				case 0x42:
+				case 0x42:	// Down
 				{
-					// Down
+					// Go forward in history
 					found = TRUE;
 					break;
 				}
