@@ -207,6 +207,17 @@ int P1_shellTask(int argc, char* argv[])
 				case 0x42:	// Down
 				{
 					// Go forward in history
+					if (promptWithCommand < 0) {
+						next = lastCommandIndx;
+					}
+					else {
+						next = (promptWithCommand + 1) % MAX_HISTORY_ENTRIES;
+					}
+
+					if (history[next]) {
+						promptWithCommand = next;
+					}
+
 					found = TRUE;
 					break;
 				}
