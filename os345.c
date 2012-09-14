@@ -83,7 +83,6 @@ clock_t myClkTime;
 clock_t myOldClkTime;
 int* rq;							// ready priority queue
 
-
 // **********************************************************************
 // **********************************************************************
 // OS startup
@@ -244,23 +243,13 @@ static void keyboard_isr()
 			
 			case 0x1b:
 			{
-				GET_CHAR;
-				char upDown = GET_CHAR;
-				if (upDown == 'A') {
-					// Move up in the command history
-					printf("u\b");
-				}
-				else if (upDown == 'B') {
-					// Move down in the command history
-					printf("d\b");
-				}
-				else {
-					// Clear entered text
-					inBuffer[0] = 0;
-					while (inBufIndx > 0) {
-						inBufIndx--;
-						printf("\b \b");
-					}
+				if (GET_CHAR == 0x5b) {
+					inBuffer[inBufIndx++] = inChar;
+					inBuffer[inBufIndx++] = 0x5b;
+					inBuffer[inBufIndx++] = GET_CHAR;
+					inBuffer[inBufIndx] = 0;
+					inBufIndx = 0;
+					semSignal(inBufferReady);	// SEM_SIGNAL(inBufferReady)
 				}
 				break;
 			}
