@@ -33,7 +33,7 @@
 //
 static void pollInterrupts(void);
 static int scheduler(void);
-static int dispatcher(int);
+static int dispatcher(void);
 
 static void keyboard_isr(void);
 static void timer_isr(void);
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 		if ((curTask = scheduler()) < 0) continue;
 
 		// dispatch curTask, quit OS if negative return
-		if (dispatcher(curTask) < 0) break;
+		if (dispatcher() < 0) break;
 	}											// end of scheduling loop
 
 	// exit os
@@ -372,7 +372,7 @@ static int scheduler()
 // **********************************************************************
 // dispatch curTask
 //
-static int dispatcher(int curTask)
+static int dispatcher()
 {
 	int result;
 
