@@ -7,12 +7,12 @@ int main(void) {
 	
 	assert("Q length error" && q->length == 3);
 	
-	/*PriorityQueueItem q[3];
-	q[0].data = 10; q[0].priority = 100;
-	q[1].data = 11; q[1].priority = 101;
-	q[2].data = 12; q[2].priority = 102;
+	PriorityQueueItem* qi = q->first;
+	qi[0].data = 10; qi[0].priority = 100;
+	qi[1].data = 11; qi[1].priority = 101;
+	qi[2].data = 12; qi[2].priority = 102;
 	
-	print(q, 3);*/
+	print(qi, 3);
 	
 	freePriorityQueue(q);
 	q = 0;
