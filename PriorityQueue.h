@@ -3,4 +3,10 @@ typedef struct {
 	int priority;
 } PriorityQueueItem;
 
+typedef struct {
+	int length;
+	PriorityQueueItem* first;
+} PriorityQueue;
+
+PriorityQueue* newPriorityQueue(int length);
 void print(PriorityQueueItem q[], int length);
