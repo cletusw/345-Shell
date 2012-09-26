@@ -4,7 +4,7 @@
 
 PriorityQueue* newPriorityQueue(int length) {
 	PriorityQueue* q = (PriorityQueue*) malloc(sizeof(PriorityQueue));
-	q->length = length;
+	q->length = 0;
 	q->first = (PriorityQueueItem*) malloc(sizeof(PriorityQueueItem) * length);
 	return q;
 }
@@ -27,5 +27,5 @@ void print(PriorityQueue* q) {
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
-
+	
 }

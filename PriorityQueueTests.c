@@ -5,7 +5,7 @@
 int main(void) {
 	PriorityQueue* q = newPriorityQueue(3);
 	
-	assert("Q length error" && q->length == 3);
+	assert("Q length error" && q->length == 0);
 	
 	enQ(q, 10, 100);
 	enQ(q, 11, 101);
