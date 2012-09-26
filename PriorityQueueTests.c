@@ -3,7 +3,7 @@
 #include "PriorityQueue.h"
 
 int main(void) {
-	PriorityQueue* q = newPriorityQueue(5);
+	PriorityQueue* q = newPriorityQueue(6);
 	assert("Q length error" && q->length == 0);
 	
 	enQ(q, 10, 100);
@@ -77,14 +77,17 @@ int main(void) {
 	enQ(q, 8, 105);
 	enQ(q, 2, 103);
 	enQ(q, 90, 101);
-	assert("DeQ error" && q->length == 5);
+	enQ(q, 20, 98);
+	assert("DeQ error" && q->length == 6);
 	assert("DeQ error" && q->array[0].data == 8 && q->array[0].priority == 105);
 	assert("DeQ error" && q->array[1].data == 2 && q->array[1].priority == 103);
 	assert("DeQ error" && q->array[2].data == 11 && q->array[2].priority == 102);
 	assert("DeQ error" && q->array[3].data == 10 && q->array[3].priority == 100);
 	assert("DeQ error" && q->array[4].data == 90 && q->array[4].priority == 101);
+	assert("DeQ error" && q->array[5].data == 20 && q->array[5].priority == 98);
 
 	deQ(q, 103);
+	assert("DeQ error" && q->length == 5);
 
 	print(q);
 	

@@ -62,6 +62,7 @@ void pop(PriorityQueue* q, int* data, int* priority) {
 }
 
 void deQ(PriorityQueue* q, int data) {
+	q->length--;
 }
 
 // Helper definitions
