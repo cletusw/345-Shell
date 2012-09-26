@@ -3,6 +3,7 @@
 #include "PriorityQueue.h"
 
 #define parent(k) ((k-1)/2)
+#define leftChild(k) (2*(k) + 1)
 
 // Helper declarations
 void exchange(PriorityQueue* q, int index1, int index2);
@@ -83,4 +84,17 @@ void swim(PriorityQueue* q, int itemIndex) {
 }
 
 void sink(PriorityQueue* q, int itemIndex) {
+	PriorityQueueItem* qArray = q->first;
+
+	while (leftChild(itemIndex) <= q->length) {
+		int j = leftChild(itemIndex);
+		if (j < q->length && qArray[j].priority < qArray[j+1].priority) {
+			j++;
+		}
+		if (qArray[itemIndex].priority >= qArray[j].priority) {
+			break;
+		}
+		exchange(q, itemIndex, j);
+		itemIndex = j;
+	}
 }
