@@ -41,6 +41,10 @@ void enQ(PriorityQueue* q, int data, int priority) {
 	swim(q, newItemIndex);
 }
 
+PriorityQueueItem* pop(PriorityQueue* q) {
+
+}
+
 // Helper definitions
 void swim(PriorityQueue* q, int itemIndex) {
 	PriorityQueueItem* qArray = q->first;

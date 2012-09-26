@@ -36,6 +36,11 @@ int main(void) {
 	assert("Insert error" && qArray[2].data == 11 && qArray[2].priority == 102);
 	assert("Insert error" && qArray[3].data == 10 && qArray[3].priority == 100);
 	assert("Insert error" && qArray[4].data == 90 && qArray[4].priority == 101);
+
+	// Pop
+	PriorityQueueItem* next = pop(q);
+	assert("Pop error" && q->length == 4);
+
 	print(q);
 	
 	freePriorityQueue(q);
