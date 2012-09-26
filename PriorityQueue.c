@@ -27,5 +27,5 @@ void print(PriorityQueue* q) {
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
-	
+	q->length++;
 }
