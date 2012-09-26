@@ -5,7 +5,7 @@ typedef struct {
 
 typedef struct {
 	int length;
-	PriorityQueueItem* first;
+	PriorityQueueItem* array;
 } PriorityQueue;
 
 PriorityQueue* newPriorityQueue(int length);
