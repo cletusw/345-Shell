@@ -62,7 +62,16 @@ void pop(PriorityQueue* q, int* data, int* priority) {
 }
 
 void deQ(PriorityQueue* q, int data) {
-	q->length--;
+	int i;
+	for (i = 0; i < q->length; i++) {
+		if (q->array[i].data == data) {
+			q->length--;
+			exchange(q, i, q->length);
+			sink(q, i);
+			return;
+		}
+	}
+
 }
 
 // Helper definitions
@@ -85,9 +94,9 @@ void swim(PriorityQueue* q, int itemIndex) {
 }
 
 void sink(PriorityQueue* q, int itemIndex) {
-	while (leftChild(itemIndex) <= q->length) {
+	while (leftChild(itemIndex) < q->length) {
 		int j = leftChild(itemIndex);
-		if (j < q->length && q->array[j].priority < q->array[j+1].priority) {
+		if (j < q->length - 1 && q->array[j].priority < q->array[j+1].priority) {
 			j++;
 		}
 		if (q->array[itemIndex].priority >= q->array[j].priority) {

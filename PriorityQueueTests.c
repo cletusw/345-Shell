@@ -36,6 +36,8 @@ int main(void) {
 	assert("Insert error" && q->array[3].data == 10 && q->array[3].priority == 100);
 	assert("Insert error" && q->array[4].data == 90 && q->array[4].priority == 101);
 
+	print(q);
+
 	// Pop
 	int data, priority;
 	pop(q, &data, &priority);
@@ -86,8 +88,41 @@ int main(void) {
 	assert("DeQ error" && q->array[4].data == 90 && q->array[4].priority == 101);
 	assert("DeQ error" && q->array[5].data == 20 && q->array[5].priority == 98);
 
-	deQ(q, 103);
+	print(q);
+
+	deQ(q, 2);
 	assert("DeQ error" && q->length == 5);
+	assert("DeQ error" && q->array[0].data == 8 && q->array[0].priority == 105);
+	assert("DeQ error" && q->array[1].data == 90 && q->array[1].priority == 101);
+	assert("DeQ error" && q->array[2].data == 11 && q->array[2].priority == 102);
+	assert("DeQ error" && q->array[3].data == 10 && q->array[3].priority == 100);
+	assert("DeQ error" && q->array[4].data == 20 && q->array[4].priority == 98);
+
+	deQ(q, 90);
+	assert("DeQ error" && q->length == 4);
+	assert("DeQ error" && q->array[0].data == 8 && q->array[0].priority == 105);
+	assert("DeQ error" && q->array[1].data == 10 && q->array[1].priority == 100);
+	assert("DeQ error" && q->array[2].data == 11 && q->array[2].priority == 102);
+	assert("DeQ error" && q->array[3].data == 20 && q->array[3].priority == 98);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 3);
+	assert("Pop error" && data == 8 && priority == 105);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 2);
+	assert("Pop error" && data == 11 && priority == 102);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 1);
+	assert("Pop error" && data == 10 && priority == 100);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 20 && priority == 98);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 0);
 
 	print(q);
 	
