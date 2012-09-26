@@ -6,6 +6,7 @@
 
 // Helper declarations
 void swim(PriorityQueue* q, int itemIndex);
+void sink(PriorityQueue* q, int itemIndex);
 
 // Public API
 PriorityQueue* newPriorityQueue(int length) {
@@ -42,7 +43,20 @@ void enQ(PriorityQueue* q, int data, int priority) {
 }
 
 void pop(PriorityQueue* q, int* data, int* priority) {
+	PriorityQueueItem* qArray = q->first;
+	*data = qArray[0].data;
+	*priority = qArray[0].priority;
+
+	// Replace top with last item
 	q->length--;
+	qArray[0] = qArray[q->length];
+
+	// Restore order
+	sink(q, 0);
+
+	// Prevent loitering
+	qArray[q->length].data = 0;
+	qArray[q->length].priority = 0;
 }
 
 // Helper definitions
@@ -59,4 +73,7 @@ void swim(PriorityQueue* q, int itemIndex) {
 		// Now check parent
 		itemIndex = parent(itemIndex);
 	}
+}
+
+void sink(PriorityQueue* q, int itemIndex) {
 }

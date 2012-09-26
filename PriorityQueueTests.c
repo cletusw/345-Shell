@@ -42,8 +42,8 @@ int main(void) {
 	pop(q, &data, &priority);
 	assert("Pop error" && q->length == 4);
 	assert("Pop error" && data == 8 && priority == 105);
-	assert("Pop error" && qArray[0].data == 2 && qArray[0].priority == 103);
-	assert("Pop error" && qArray[1].data == 90 && qArray[1].priority == 101);
+	assert("Pop error" && qArray[0].data == 90 && qArray[0].priority == 101);
+	assert("Pop error" && qArray[1].data == 2 && qArray[1].priority == 103);
 	assert("Pop error" && qArray[2].data == 11 && qArray[2].priority == 102);
 	assert("Pop error" && qArray[3].data == 10 && qArray[3].priority == 100);
 
