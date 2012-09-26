@@ -12,7 +12,7 @@ int main(void) {
 	qi[1].data = 11; qi[1].priority = 101;
 	qi[2].data = 12; qi[2].priority = 102;
 	
-	print(qi, 3);
+	print(q);
 	
 	freePriorityQueue(q);
 	q = 0;

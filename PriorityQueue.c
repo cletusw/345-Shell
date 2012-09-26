@@ -14,11 +14,13 @@ void freePriorityQueue(PriorityQueue* q) {
 	free(q);
 }
 
-void print(PriorityQueueItem q[], int length) {
+void print(PriorityQueue* q) {
 	int i;
+	int length = q->length;
+	PriorityQueueItem* qArray = q->first;
 	
 	for (i = 0; i < length; i++) {
-		printf("{%d, %d} ", q[i].data, q[i].priority);
+		printf("{%d, %d} ", qArray[i].data, qArray[i].priority);
 	}
 	
 	printf("\n");

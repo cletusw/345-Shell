@@ -9,4 +9,4 @@ typedef struct {
 } PriorityQueue;
 
 PriorityQueue* newPriorityQueue(int length);
-void print(PriorityQueueItem q[], int length);
+void print(PriorityQueue* q);
