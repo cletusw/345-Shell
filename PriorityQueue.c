@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "PriorityQueue.h"
 
-#define parent(k) ((k)/2)
+#define parent(k) ((k-1)/2)
 
 // Helper declarations
 void swim(PriorityQueue* q, int itemIndex);
