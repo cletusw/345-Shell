@@ -41,7 +41,7 @@ void enQ(PriorityQueue* q, int data, int priority) {
 	swim(q, newItemIndex);
 }
 
-PriorityQueueItem* pop(PriorityQueue* q) {
+void pop(PriorityQueue* q, int* data, int* priority) {
 	q->length--;
 }
 
