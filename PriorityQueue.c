@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include "PriorityQueue.h"
 
+#define parent(k) ((k)/2)
+
+// Helper declarations
+void swim(int itemIndex);
+
+// Public API
 PriorityQueue* newPriorityQueue(int length) {
 	PriorityQueue* q = (PriorityQueue*) malloc(sizeof(PriorityQueue));
 	q->length = 0;
@@ -30,5 +36,10 @@ void enQ(PriorityQueue* q, int data, int priority) {
 	PriorityQueueItem* item = &(q->first[q->length]);
 	item->data = data;
 	item->priority = priority;
+	swim(q->length);
 	q->length++;
+}
+
+// Helper definitions
+void swim(int itemIndex) {
 }
