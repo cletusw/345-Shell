@@ -46,6 +46,31 @@ int main(void) {
 	assert("Pop error" && q->array[2].data == 11 && q->array[2].priority == 102);
 	assert("Pop error" && q->array[3].data == 10 && q->array[3].priority == 100);
 
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 3);
+	assert("Pop error" && data == 2 && priority == 103);
+	assert("Pop error" && q->array[0].data == 11 && q->array[0].priority == 102);
+	assert("Pop error" && q->array[1].data == 90 && q->array[1].priority == 101);
+	assert("Pop error" && q->array[2].data == 10 && q->array[2].priority == 100);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 2);
+	assert("Pop error" && data == 11 && priority == 102);
+	assert("Pop error" && q->array[0].data == 90 && q->array[0].priority == 101);
+	assert("Pop error" && q->array[1].data == 10 && q->array[1].priority == 100);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 1);
+	assert("Pop error" && data == 90 && priority == 101);
+	assert("Pop error" && q->array[0].data == 10 && q->array[0].priority == 100);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 10 && priority == 100);
+
+	pop(q, &data, &priority);
+	assert("Pop error" && q->length == 0);
+
 	print(q);
 	
 	freePriorityQueue(q);

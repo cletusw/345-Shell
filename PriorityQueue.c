@@ -44,19 +44,21 @@ void enQ(PriorityQueue* q, int data, int priority) {
 }
 
 void pop(PriorityQueue* q, int* data, int* priority) {
-	*data = q->array[0].data;
-	*priority = q->array[0].priority;
+	if (q->length > 0) {
+		*data = q->array[0].data;
+		*priority = q->array[0].priority;
 
-	// Replace top with last item
-	q->length--;
-	q->array[0] = q->array[q->length];
+		// Replace top with last item
+		q->length--;
+		q->array[0] = q->array[q->length];
 
-	// Restore order
-	sink(q, 0);
+		// Restore order
+		sink(q, 0);
 
-	// Prevent loitering
-	q->array[q->length].data = 0;
-	q->array[q->length].priority = 0;
+		// Prevent loitering
+		q->array[q->length].data = 0;
+		q->array[q->length].priority = 0;
+	}
 }
 
 // Helper definitions
