@@ -5,7 +5,7 @@
 #define parent(k) ((k)/2)
 
 // Helper declarations
-void swim(int itemIndex);
+void swim(PriorityQueue* q, int itemIndex);
 
 // Public API
 PriorityQueue* newPriorityQueue(int length) {
@@ -33,13 +33,26 @@ void print(PriorityQueue* q) {
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
-	PriorityQueueItem* item = &(q->first[q->length]);
+	int newItemIndex = q->length;
+	PriorityQueueItem* item = &(q->first[newItemIndex]);
 	item->data = data;
 	item->priority = priority;
-	swim(q->length);
 	q->length++;
+	swim(q, newItemIndex);
 }
 
 // Helper definitions
-void swim(int itemIndex) {
+void swim(PriorityQueue* q, int itemIndex) {
+	PriorityQueueItem* qArray = q->first;
+	PriorityQueueItem temp;
+
+	while (itemIndex > 0 && qArray[parent(itemIndex)].priority < qArray[itemIndex].priority) {
+		// Swap item and parent
+		temp = qArray[parent(itemIndex)];
+		qArray[parent(itemIndex)] = qArray[itemIndex];
+		qArray[itemIndex] = temp;
+
+		// Now check parent
+		itemIndex = parent(itemIndex);
+	}
 }
