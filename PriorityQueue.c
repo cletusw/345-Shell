@@ -42,7 +42,7 @@ void enQ(PriorityQueue* q, int data, int priority) {
 }
 
 PriorityQueueItem* pop(PriorityQueue* q) {
-
+	q->length--;
 }
 
 // Helper definitions
