@@ -25,3 +25,7 @@ void print(PriorityQueue* q) {
 	
 	printf("\n");
 }
+
+void enQ(PriorityQueue* q, int data, int priority) {
+
+}

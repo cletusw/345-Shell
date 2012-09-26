@@ -10,3 +10,4 @@ typedef struct {
 
 PriorityQueue* newPriorityQueue(int length);
 void print(PriorityQueue* q);
+void enQ(PriorityQueue* q, int data, int priority);
