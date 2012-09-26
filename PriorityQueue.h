@@ -13,3 +13,4 @@ void freePriorityQueue(PriorityQueue* q);
 void print(PriorityQueue* q);
 void enQ(PriorityQueue* q, int data, int priority);
 void pop(PriorityQueue* q, int* data, int* priority);
+void deQ(PriorityQueue* q, int data);

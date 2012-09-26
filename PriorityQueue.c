@@ -61,6 +61,9 @@ void pop(PriorityQueue* q, int* data, int* priority) {
 	}
 }
 
+void deQ(PriorityQueue* q, int data) {
+}
+
 // Helper definitions
 void exchange(PriorityQueue* q, int index1, int index2) {
 	PriorityQueueItem temp;

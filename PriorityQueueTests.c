@@ -71,6 +71,21 @@ int main(void) {
 	pop(q, &data, &priority);
 	assert("Pop error" && q->length == 0);
 
+	// Test deQ
+	enQ(q, 10, 100);
+	enQ(q, 11, 102);
+	enQ(q, 8, 105);
+	enQ(q, 2, 103);
+	enQ(q, 90, 101);
+	assert("DeQ error" && q->length == 5);
+	assert("DeQ error" && q->array[0].data == 8 && q->array[0].priority == 105);
+	assert("DeQ error" && q->array[1].data == 2 && q->array[1].priority == 103);
+	assert("DeQ error" && q->array[2].data == 11 && q->array[2].priority == 102);
+	assert("DeQ error" && q->array[3].data == 10 && q->array[3].priority == 100);
+	assert("DeQ error" && q->array[4].data == 90 && q->array[4].priority == 101);
+
+	deQ(q, 103);
+
 	print(q);
 	
 	freePriorityQueue(q);
