@@ -5,6 +5,7 @@
 #define parent(k) ((k-1)/2)
 
 // Helper declarations
+void exchange(PriorityQueue* q, int index1, int index2);
 void swim(PriorityQueue* q, int itemIndex);
 void sink(PriorityQueue* q, int itemIndex);
 
@@ -60,15 +61,21 @@ void pop(PriorityQueue* q, int* data, int* priority) {
 }
 
 // Helper definitions
-void swim(PriorityQueue* q, int itemIndex) {
+void exchange(PriorityQueue* q, int index1, int index2) {
 	PriorityQueueItem* qArray = q->first;
 	PriorityQueueItem temp;
 
+	temp = qArray[index1];
+	qArray[index1] = qArray[index2];
+	qArray[index2] = temp;
+}
+
+void swim(PriorityQueue* q, int itemIndex) {
+	PriorityQueueItem* qArray = q->first;
+
 	while (itemIndex > 0 && qArray[parent(itemIndex)].priority < qArray[itemIndex].priority) {
 		// Swap item and parent
-		temp = qArray[parent(itemIndex)];
-		qArray[parent(itemIndex)] = qArray[itemIndex];
-		qArray[itemIndex] = temp;
+		exchange(q, parent(itemIndex), itemIndex);
 
 		// Now check parent
 		itemIndex = parent(itemIndex);
