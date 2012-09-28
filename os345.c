@@ -432,6 +432,9 @@ static int dispatcher()
 				{
 					tcb[curTask].signal &= ~mySIGTERM;
 					(*tcb[curTask].sigTermHandler)();
+
+					enQ(rq, curTask, tcb[curTask].priority);
+					return 0;
 				}
 
 				if (tcb[curTask].signal & mySIGTSTP)
