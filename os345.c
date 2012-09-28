@@ -293,7 +293,7 @@ static void timer_isr()
 	{
 		// signal 10 second
 		semSignal(tics10sec);
-		oldTime1 += 10;
+		oldTime10 += 10;
 	}
 
   	// one second timer
