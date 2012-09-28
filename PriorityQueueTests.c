@@ -71,6 +71,7 @@ int main(void) {
 	assert("Pop error" && data == 10);
 
 	data = pop(q);
+	assert("Pop error" && data == -1);
 	assert("Pop error" && q->length == 0);
 
 	// Test deQ
@@ -122,7 +123,25 @@ int main(void) {
 	assert("Pop error" && data == 20);
 
 	data = pop(q);
+	assert("Pop error" && data == -1);
 	assert("Pop error" && q->length == 0);
+
+	enQ(q, 20, 98);
+	data = pop(q);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 20);
+	enQ(q, 20, 98);
+	data = pop(q);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 20);
+	enQ(q, 20, 98);
+	data = pop(q);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 20);
+	enQ(q, 20, 98);
+	data = pop(q);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 20);
 
 	print(q);
 	
