@@ -7,4 +7,4 @@ clean:
 test:
 	gcc -o test PriorityQueue*.c
 	./test
-	-valgrind --tool=memcheck test
+	-valgrind --tool=memcheck ./test
