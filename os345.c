@@ -834,11 +834,6 @@ static void exitTask(int taskId)
 	// 1. find task in system queue
 	// 2. if blocked, unblock (handle semaphore)
 	// 3. set state to exit
-
-	printf("\nEntering exitTask()");
-	print(rq);
-	deQ(rq, taskId);
-	print(rq);
 	
 	tcb[taskId].state = S_EXIT;			// EXIT task state
 
@@ -877,7 +872,10 @@ static int sysKillTask(int taskId)
 		}
 	}
 
-	// ?? delete task from system queues
+	// delete task from system queues
+	deQ(rq, taskId);
+
+	// ?? Other queues
 
 	tcb[taskId].name = 0;			// release tcb slot
 	return 0;
