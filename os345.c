@@ -767,7 +767,7 @@ int createTask(char* name,						// task name
 			tcb[tid].stack = malloc(STACK_SIZE * sizeof(int));
 
 			// Insert task into "ready" queue
-			enQ(rq, tid, MED_PRIORITY);
+			enQ(rq, tid, priority);
 
 			if (tid) swapTask();				// do context switch (if not cli)
 			return tid;							// return tcb index (curTask)
