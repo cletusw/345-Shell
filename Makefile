@@ -6,5 +6,7 @@ clean:
 
 test:
 	gcc -o test PriorityQueue*.c
-	./test
-	-valgrind --tool=memcheck ./test
+	-valgrind --tool=memcheck --leak-check=full ./test
+
+testShell: shell
+	-valgrind --tool=memcheck --leak-check=full ./shell
