@@ -906,7 +906,6 @@ void semSignal(Semaphore* s)
 		// binary semaphore
 		// look through tasks for one suspended on this semaphore
 
-temp:	// ?? temporary label
 		if ((taskId = pop(s->blockedTasks)) >= 0) {
 			assert("Popped wrong task from semaphore blocked queue" && tcb[taskId].event == s);
 
@@ -928,9 +927,12 @@ temp:	// ?? temporary label
 	else
 	{
 		// counting semaphore
-		// ?? implement counting semaphore
+		if (++s->state > 0) return;
 
-		goto temp;
+		taskId = pop(s->blockedTasks);
+		tcb[taskId].event = 0;			// clear event pointer
+		tcb[taskId].state = S_READY;
+		enQ(rq, taskId, tcb[taskId].priority);
 	}
 } // end semSignal
 
