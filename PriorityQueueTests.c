@@ -40,37 +40,37 @@ int main(void) {
 
 	// Pop
 	int data, priority;
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 4);
-	assert("Pop error" && data == 8 && priority == 105);
+	assert("Pop error" && data == 8);
 	assert("Pop error" && q->array[0].data == 2 && q->array[0].priority == 103);
 	assert("Pop error" && q->array[1].data == 90 && q->array[1].priority == 101);
 	assert("Pop error" && q->array[2].data == 11 && q->array[2].priority == 102);
 	assert("Pop error" && q->array[3].data == 10 && q->array[3].priority == 100);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 3);
-	assert("Pop error" && data == 2 && priority == 103);
+	assert("Pop error" && data == 2);
 	assert("Pop error" && q->array[0].data == 11 && q->array[0].priority == 102);
 	assert("Pop error" && q->array[1].data == 90 && q->array[1].priority == 101);
 	assert("Pop error" && q->array[2].data == 10 && q->array[2].priority == 100);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 2);
-	assert("Pop error" && data == 11 && priority == 102);
+	assert("Pop error" && data == 11);
 	assert("Pop error" && q->array[0].data == 90 && q->array[0].priority == 101);
 	assert("Pop error" && q->array[1].data == 10 && q->array[1].priority == 100);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 1);
-	assert("Pop error" && data == 90 && priority == 101);
+	assert("Pop error" && data == 90);
 	assert("Pop error" && q->array[0].data == 10 && q->array[0].priority == 100);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 0);
-	assert("Pop error" && data == 10 && priority == 100);
+	assert("Pop error" && data == 10);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 0);
 
 	// Test deQ
@@ -105,23 +105,23 @@ int main(void) {
 	assert("DeQ error" && q->array[2].data == 11 && q->array[2].priority == 102);
 	assert("DeQ error" && q->array[3].data == 20 && q->array[3].priority == 98);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 3);
-	assert("Pop error" && data == 8 && priority == 105);
+	assert("Pop error" && data == 8);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 2);
-	assert("Pop error" && data == 11 && priority == 102);
+	assert("Pop error" && data == 11);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 1);
-	assert("Pop error" && data == 10 && priority == 100);
+	assert("Pop error" && data == 10);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 0);
-	assert("Pop error" && data == 20 && priority == 98);
+	assert("Pop error" && data == 20);
 
-	pop(q, &data, &priority);
+	data = pop(q);
 	assert("Pop error" && q->length == 0);
 
 	print(q);

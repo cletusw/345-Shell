@@ -26,12 +26,14 @@ void freePriorityQueue(PriorityQueue* q) {
 void print(PriorityQueue* q) {
 	int i;
 	int length = q->length;
+
+	printf("::");
 	
 	for (i = 0; i < length; i++) {
 		printf("{%d, %d} ", q->array[i].data, q->array[i].priority);
 	}
 	
-	printf("\n");
+	printf("::\n");
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
@@ -43,10 +45,11 @@ void enQ(PriorityQueue* q, int data, int priority) {
 	swim(q, newItemIndex);
 }
 
-void pop(PriorityQueue* q, int* data, int* priority) {
+int pop(PriorityQueue* q) {
+	int data;
+
 	if (q->length > 0) {
-		*data = q->array[0].data;
-		*priority = q->array[0].priority;
+		data = q->array[0].data;
 
 		// Replace top with last item
 		q->length--;
@@ -58,7 +61,11 @@ void pop(PriorityQueue* q, int* data, int* priority) {
 		// Prevent loitering
 		q->array[q->length].data = 0;
 		q->array[q->length].priority = 0;
+
+		return data;
 	}
+
+	return -1;
 }
 
 void deQ(PriorityQueue* q, int data) {
