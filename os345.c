@@ -867,15 +867,16 @@ static int sysKillTask(int taskId)
 		}
 		else
 		{
+			// Delete task from blocked queues
+			deQ(sem->blockedTasks, taskId);
+			
 			// move to next semaphore
 			semLink = (Semaphore**)&sem->semLink;
 		}
 	}
 
-	// delete task from system queues
+	// delete task from ready queue
 	deQ(rq, taskId);
-
-	// ?? Other queues
 
 	tcb[taskId].name = 0;			// release tcb slot
 	return 0;
