@@ -354,13 +354,11 @@ static int scheduler()
 	// ?? priorities, clean up dead tasks, and handle semaphores appropriately.
 
 	// schedule next task
-	nextTask = ++curTask;
+	nextTask = pop(rq);
 
 	// mask sure nextTask is valid
-	while (!tcb[nextTask].name)
-	{
-		if (++nextTask >= MAX_TASKS) nextTask = 0;
-	}
+	assert("Popped invalid task" && (nextTask == -1 || tcb[nextTask].name));
+
 	if (tcb[nextTask].signal & mySIGSTOP) return -1;
 
 	return nextTask;
@@ -501,7 +499,10 @@ void swapTask()
 	}
 
 	// context switch - move task state to ready
-	if (tcb[curTask].state == S_RUNNING) tcb[curTask].state = S_READY;
+	if (tcb[curTask].state == S_RUNNING) {
+		tcb[curTask].state = S_READY;
+		enQ(rq, curTask, tcb[curTask].priority);
+	}
 
 	// move to kernel mode (reschedule)
 	longjmp(k_context, 2);
@@ -891,7 +892,7 @@ static int sysKillTask(int taskId)
 //
 void semSignal(Semaphore* s)
 {
-	int i;
+	int taskId;
 	// assert there is a semaphore and it is a legal type
 	assert("semSignal Error" && s && ((s->type == 0) || (s->type == 1)));
 
@@ -902,19 +903,18 @@ void semSignal(Semaphore* s)
 		// look through tasks for one suspended on this semaphore
 
 temp:	// ?? temporary label
-		for (i=0; i<MAX_TASKS; i++)	// look for suspended task
-		{
-			if (tcb[i].event == s)
-			{
-				s->state = 0;				// clear semaphore
-				tcb[i].event = 0;			// clear event pointer
-				tcb[i].state = S_READY;	// unblock task
+		if ((taskId = pop(s->blockedTasks)) >= 0) {
+			assert("Popped wrong task from semaphore blocked queue" && tcb[taskId].event == s);
 
-				// ?? move task from blocked to ready queue
+			s->state = 0;				// clear semaphore
+			tcb[taskId].event = 0;			// clear event pointer
+			tcb[taskId].state = S_READY;	// unblock task
 
-				if (!superMode) swapTask();
-				return;
-			}
+			// move task from blocked to ready queue
+			enQ(rq, taskId, tcb[taskId].priority);
+
+			if (!superMode) swapTask();
+			return;
 		}
 		// nothing waiting on semaphore, go ahead and just signal
 		s->state = 1;						// nothing waiting, signal
@@ -957,7 +957,8 @@ temp:	// ?? temporary label
 			tcb[curTask].event = s;		// block task
 			tcb[curTask].state = S_BLOCKED;
 
-			// ?? move task from ready queue to blocked queue
+			// move task from ready queue to blocked queue
+			enQ(s->blockedTasks, curTask, tcb[curTask].priority);
 
 			swapTask();						// reschedule the tasks
 			return 1;

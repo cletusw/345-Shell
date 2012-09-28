@@ -37,7 +37,7 @@ void print(PriorityQueue* q) {
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
-	printf("\n++%d\n", data);
+	//printf("\n++%d\n", data);
 	int newItemIndex = q->length;
 	PriorityQueueItem* item = &(q->array[newItemIndex]);
 	item->data = data;
@@ -73,7 +73,7 @@ void deQ(PriorityQueue* q, int data) {
 	int i;
 	for (i = 0; i < q->length; i++) {
 		if (q->array[i].data == data) {
-			printf("\n--%d\n", data);
+			//printf("\n--%d\n", data);
 			q->length--;
 			exchange(q, i, q->length);
 			sink(q, i);
