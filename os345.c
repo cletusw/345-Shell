@@ -51,6 +51,7 @@ Semaphore* keyboard;				// keyboard semaphore
 Semaphore* charReady;				// character has been entered
 Semaphore* inBufferReady;			// input buffer ready semaphore
 
+Semaphore* tics10sec;				// 10 second semaphore
 Semaphore* tics1sec;				// 1 second semaphore
 Semaphore* tics10thsec;				// 1/10 second semaphore
 
@@ -79,6 +80,7 @@ int lastPollClock;					// last pollClock
 bool diskMounted;					// disk has been mounted
 
 time_t oldTime1;					// old 1sec time
+time_t oldTime10;					// old 10sec time
 clock_t myClkTime;
 clock_t myOldClkTime;
 PriorityQueue* rq;					// ready priority queue
@@ -139,6 +141,7 @@ int main(int argc, char* argv[])
 	charReady = createSemaphore("charReady", BINARY, 0);
 	inBufferReady = createSemaphore("inBufferReady", BINARY, 0);
 	keyboard = createSemaphore("keyboard", BINARY, 1);
+	tics10sec = createSemaphore("tics10sec", COUNTING, 0);
 	tics1sec = createSemaphore("tics1sec", BINARY, 0);
 	tics10thsec = createSemaphore("tics10thsec", BINARY, 0);
 
@@ -285,6 +288,14 @@ static void timer_isr()
 	// capture current time
   	time(&currentTime);
 
+	// ten second timer
+	if ((currentTime - oldTime10) >= 10)
+	{
+		// signal 10 second
+		semSignal(tics10sec);
+		oldTime1 += 10;
+	}
+
   	// one second timer
   	if ((currentTime - oldTime1) >= 1)
   	{
@@ -300,8 +311,6 @@ static void timer_isr()
 		myOldClkTime = myOldClkTime + ONE_TENTH_SEC;   // update old
 		semSignal(tics10thsec);
 	}
-
-	// ?? add other timer sampling/signaling code here for project 2
 
 	return;
 } // end timer_isr
@@ -545,6 +554,7 @@ static void initOS()
 	// capture current time
 	lastPollClock = clock();			// last pollClock
    time(&oldTime1);
+   time(&oldTime10);
 
 	// init system tcb's
 	for (i=0; i<MAX_TASKS; i++)
