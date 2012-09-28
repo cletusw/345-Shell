@@ -22,7 +22,6 @@
 #include <setjmp.h>
 #include <assert.h>
 #include "os345.h"
-#include "PriorityQueue.h"
 
 #define my_printf	printf
 

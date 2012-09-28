@@ -27,7 +27,6 @@
 #include "os345.h"
 #include "os345lc3.h"
 #include "os345fat.h"
-#include "PriorityQueue.h"
 
 // **********************************************************************
 //	local prototypes
@@ -1061,6 +1060,7 @@ Semaphore* createSemaphore(char* name, int type, int state)
 	sem->type = type;							// 0=binary, 1=counting
 	sem->state = state;						// initial semaphore state
 	sem->taskNum = curTask;					// set parent task #
+	sem->blockedTasks = newPriorityQueue(MAX_TASKS);
 
 	// prepend to semaphore list
 	sem->semLink = (struct semaphore*)semaphoreList;
@@ -1095,6 +1095,7 @@ bool deleteSemaphore(Semaphore** semaphore)
 
 			// ?? free all semaphore memory
 			free(sem->name);
+			freePriorityQueue(sem->blockedTasks);
 			free(sem);
 
 			return TRUE;

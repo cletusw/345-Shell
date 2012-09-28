@@ -1,6 +1,9 @@
 // os345.h
 #ifndef __os345_h__
 #define __os345_h__
+
+#include "PriorityQueue.h"
+
 // ***********************************************************************
 //
 #define STARTUP_MSG	"CS345 F2012"
@@ -92,6 +95,7 @@ typedef struct semaphore			// semaphore
 	int state;							// semaphore state
 	int type;							// semaphore type
 	int taskNum;						// semaphore creator task #
+	PriorityQueue* blockedTasks;		// Blocked task priority queue
 } Semaphore;
 
 // task control block
