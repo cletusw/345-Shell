@@ -27,6 +27,7 @@
 #include "os345.h"
 #include "os345lc3.h"
 #include "os345fat.h"
+#include "PriorityQueue.h"
 
 // **********************************************************************
 //	local prototypes
@@ -81,7 +82,7 @@ bool diskMounted;					// disk has been mounted
 time_t oldTime1;					// old 1sec time
 clock_t myClkTime;
 clock_t myOldClkTime;
-int* rq;							// ready priority queue
+PriorityQueue* rq;					// ready priority queue
 
 // **********************************************************************
 // **********************************************************************
@@ -536,7 +537,7 @@ static void initOS()
 	diskMounted = 0;					// disk has been mounted
 
 	// malloc ready queue
-	rq = (int*)malloc(MAX_TASKS * sizeof(int));
+	rq = newPriorityQueue(MAX_TASKS);
 
 	// capture current time
 	lastPollClock = clock();			// last pollClock
@@ -591,7 +592,7 @@ void powerDown(int code)
 		deleteSemaphore(&semaphoreList);
 
 	// free ready queue
-	free(rq);
+	freePriorityQueue(rq);
 
 	// ?? release any other system resources
 	// ?? deltaclock (project 3)
@@ -765,7 +766,8 @@ int createTask(char* name,						// task name
 			// Each task must have its own stack and stack pointer.
 			tcb[tid].stack = malloc(STACK_SIZE * sizeof(int));
 
-			// ?? may require inserting task into "ready" queue
+			// Insert task into "ready" queue
+			enQ(rq, tid, MED_PRIORITY);
 
 			if (tid) swapTask();				// do context switch (if not cli)
 			return tid;							// return tcb index (curTask)

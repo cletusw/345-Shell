@@ -22,6 +22,7 @@
 #include <setjmp.h>
 #include <assert.h>
 #include "os345.h"
+#include "PriorityQueue.h"
 
 #define my_printf	printf
 
@@ -34,6 +35,7 @@ extern TCB tcb[];								// task control block
 extern int curTask;							// current task #
 extern Semaphore* semaphoreList;			// linked list of active semaphores
 extern jmp_buf reset_context;				// context of kernel stack
+extern PriorityQueue* rq;					// ready priority queue
 
 // ***********************************************************************
 // project 2 functions and tasks
@@ -89,7 +91,10 @@ int P2_listTasks(int argc, char* argv[])
 {
 	int i;
 
-//	?? 1) List all tasks in all queues
+	// List all tasks in all queues
+	printf("\nReady Queue {tid, priority}\n");
+	print(rq);
+
 // ?? 2) Show the task stake (new, running, blocked, ready)
 // ?? 3) If blocked, indicate which semaphore
 
