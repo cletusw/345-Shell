@@ -54,6 +54,8 @@ Command** commands;						// shell commands
 char* history[MAX_HISTORY_ENTRIES];		// Circular array of inBuffer history
 int lastCommandIndx;					// Index in history of last entry, inits to 0
 
+// Project 2
+extern int curTask;
 
 // ***********************************************************************
 // project 1 prototypes
@@ -291,7 +293,7 @@ void sigIntHandler(void) {
 } // end sigIntHandler
 
 void sigTermHandler(void) {
-	killTask(-1);
+	killTask(curTask);
 } // end sigTermHandler
 
 void sigTstpHandler(void) {
