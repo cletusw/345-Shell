@@ -91,8 +91,16 @@ int P2_listTasks(int argc, char* argv[])
 	int i;
 
 	// List all tasks in all queues
-	printf("\nReady Queue {tid, priority}\n");
+	printf("\nReady Queue ");
 	print(rq);
+
+	Semaphore* sem = semaphoreList;
+	while(sem)
+	{
+		printf("\n%s Queue ", sem->name);
+		print(sem->blockedTasks);
+		sem = (Semaphore*)sem->semLink;
+	}
 
 	// Show the tcb, including state (new, running, blocked, ready)
 	// If blocked, indicate which semaphore
