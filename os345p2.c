@@ -95,9 +95,8 @@ int P2_listTasks(int argc, char* argv[])
 	printf("\nReady Queue {tid, priority}\n");
 	print(rq);
 
-// ?? 2) Show the task stake (new, running, blocked, ready)
-// ?? 3) If blocked, indicate which semaphore
-
+	// Show the tcb, including state (new, running, blocked, ready)
+	// If blocked, indicate which semaphore
 	for (i=0; i<MAX_TASKS; i++)
 	{
 		if (tcb[i].name)
