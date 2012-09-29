@@ -35,12 +35,14 @@ extern int curTask;							// current task #
 extern Semaphore* semaphoreList;			// linked list of active semaphores
 extern jmp_buf reset_context;				// context of kernel stack
 extern PriorityQueue* rq;					// ready priority queue
+extern Semaphore* tics10sec;
 
 // ***********************************************************************
 // project 2 functions and tasks
 
 int signalTask(int, char**);
 int ImAliveTask(int, char**);
+int tenSecondsTask(int, char**);
 
 // ***********************************************************************
 // ***********************************************************************
@@ -53,6 +55,16 @@ int P2_project2(int argc, char* argv[])
 
 	printf("\nStarting Project 2");
 	SWAP;
+
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
+	createTask("10 Seconds", tenSecondsTask, HIGH_PRIORITY, 0, NULL);
 
 	// start tasks looking for sTask semaphores
 	createTask("signal1",				// task name
@@ -78,6 +90,7 @@ int P2_project2(int argc, char* argv[])
 					LOW_PRIORITY,			// task priority
 					2,							// task argc
 					aliveArgv);				// task argument pointers
+
 	return 0;
 } // end P2_project2
 
@@ -266,6 +279,24 @@ int signalTask(int argc, char* argv[])
 	}
 	return 0;						// terminate task
 } // end signalTask
+
+
+
+// ***********************************************************************
+// ***********************************************************************
+// tenSeconds task
+int tenSecondsTask(int argc, char* argv[])
+{
+	int count = 0;
+
+	while(1)
+	{
+		SEM_WAIT(tics10sec);
+		printf("\n%s  Task[%d], count=%d", tcb[curTask].name, curTask, ++count);
+	}
+
+	return 0;
+} // end tenSecondsTask
 
 
 
