@@ -967,7 +967,6 @@ int semWait(Semaphore* s)
 		// binary semaphore
 		// if state is zero, then block task
 
-temp:	// ?? temporary label
 		if (s->state == 0)
 		{
 			tcb[curTask].event = s;		// block task
@@ -986,9 +985,15 @@ temp:	// ?? temporary label
 	else
 	{
 		// counting semaphore
-		// ?? implement counting semaphore
+		s->state--;					// consume
+		if (s->state >= 0) return;	// if available, return
 
-		goto temp;
+		// resource not available, block task
+		tcb[curTask].state = S_BLOCKED;	// change task state to blocked
+		deQ(rq, curTask);				// move from ready  to blocked queue
+		enQ(s->blockedTasks, curTask, tcb[curTask].priority);
+		swapTask();				// reschedule the tasks
+		return;					// returning from blocked state
 	}
 } // end semWait
 
