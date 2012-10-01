@@ -144,6 +144,25 @@ int main(void) {
 	assert("Pop error" && data == 20);
 
 	print(q);
+
+	// Pop and reQ
+	enQ(q, 1, 100);
+	enQ(q, 2, 100);
+	enQ(q, 3, 100);
+	enQ(q, 4, 100);
+
+	data = pop(q);
+	assert("Pop error" && q->length == 3);
+	assert("Pop error" && data == 1);
+	data = pop(q);
+	assert("Pop error" && q->length == 2);
+	assert("Pop error" && data == 2);
+	data = pop(q);
+	assert("Pop error" && q->length == 1);
+	assert("Pop error" && data == 3);
+	data = pop(q);
+	assert("Pop error" && q->length == 0);
+	assert("Pop error" && data == 4);
 	
 	freePriorityQueue(q);
 	q = 0;
