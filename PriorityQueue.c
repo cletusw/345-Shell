@@ -34,7 +34,7 @@ void print(PriorityQueue* q) {
 		cur = cur->next;
 	}
 	
-	printf("::\n");
+	printf("::");
 }
 
 void enQ(PriorityQueue* q, int data, int priority) {
