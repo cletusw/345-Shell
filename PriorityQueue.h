@@ -1,15 +1,19 @@
-typedef struct {
+#define EMPTY_QUEUE -1
+
+struct list_el {
 	int data;
 	int priority;
-} PriorityQueueItem;
+	struct list_el* next;
+};
+
+typedef struct list_el PriorityQueueItem;
 
 typedef struct {
-	int length;
-	PriorityQueueItem* array;
+	PriorityQueueItem* head;
 } PriorityQueue;
 
-PriorityQueue* newPriorityQueue(int length);
-void freePriorityQueue(PriorityQueue* q);
+PriorityQueue* newPriorityQueue();
+void deletePriorityQueue(PriorityQueue* q);
 void print(PriorityQueue* q);
 void enQ(PriorityQueue* q, int data, int priority);
 int pop(PriorityQueue* q);

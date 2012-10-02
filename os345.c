@@ -605,7 +605,7 @@ void powerDown(int code)
 		deleteSemaphore(&semaphoreList);
 
 	// free ready queue
-	freePriorityQueue(rq);
+	deletePriorityQueue(rq);
 
 	// ?? release any other system resources
 	// ?? deltaclock (project 3)
@@ -1117,7 +1117,7 @@ bool deleteSemaphore(Semaphore** semaphore)
 
 			// ?? free all semaphore memory
 			free(sem->name);
-			freePriorityQueue(sem->blockedTasks);
+			deletePriorityQueue(sem->blockedTasks);
 			free(sem);
 
 			return TRUE;
