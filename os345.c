@@ -368,7 +368,10 @@ static int scheduler()
 	// mask sure nextTask is valid
 	assert("Popped invalid task" && (nextTask == -1 || tcb[nextTask].name));
 
-	if (tcb[nextTask].signal & mySIGSTOP) return -1;
+	if (tcb[nextTask].signal & mySIGSTOP) {
+		enQ(rq, nextTask, tcb[nextTask].priority);
+		return -1;
+	}
 
 	return nextTask;
 } // end scheduler
@@ -449,6 +452,7 @@ static int dispatcher()
 				{
 					tcb[curTask].signal &= ~mySIGTSTP;
 					(*tcb[curTask].sigTstpHandler)();
+					enQ(rq, curTask, tcb[curTask].priority);
 					return 0;						// do not schedule task
 				}
 
