@@ -441,15 +441,15 @@ static int dispatcher()
 				{
 					tcb[curTask].signal &= ~mySIGTERM;
 					(*tcb[curTask].sigTermHandler)();
-
-					enQ(rq, curTask, tcb[curTask].priority);
-					return 0;
+					enQ(rq, curTask, tcb[curTask].priority);	// ??
+					return 0;						// do not schedule task
 				}
 
 				if (tcb[curTask].signal & mySIGTSTP)
 				{
 					tcb[curTask].signal &= ~mySIGTSTP;
 					(*tcb[curTask].sigTstpHandler)();
+					return 0;						// do not schedule task
 				}
 
 				if (tcb[curTask].signal & mySIGCONT)
