@@ -92,5 +92,7 @@ void deQ(PriorityQueue* q, int data) {
 			free(temp);
 			return;
 		}
+
+		cur = cur->next;
 	}
 }
