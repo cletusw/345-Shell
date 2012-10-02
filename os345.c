@@ -993,6 +993,7 @@ int semWait(Semaphore* s)
 		if (s->state >= 0) return;	// if available, return
 
 		// resource not available, block task
+		tcb[curTask].event = s;		// block task
 		tcb[curTask].state = S_BLOCKED;	// change task state to blocked
 		deQ(rq, curTask);				// move from ready  to blocked queue
 		enQ(s->blockedTasks, curTask, tcb[curTask].priority);
