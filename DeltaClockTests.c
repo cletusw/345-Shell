@@ -11,6 +11,12 @@ int main(void) {
 	assert("DeltaClock creation error" && dc->head == NULL);
 	
 	print(dc);
+
+	insert(dc, 2, &callback1);
+	insert(dc, 5, &callback2);
+	insert(dc, 8, &callback3);
+
+	print(dc);
 	
 	deleteDeltaClock(dc);
 	dc = 0;

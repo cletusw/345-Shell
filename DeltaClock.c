@@ -34,3 +34,6 @@ void print(DeltaClock* dc) {
 	
 	printf("**\n");
 }
+
+void insert(DeltaClock* dc, int tics, void (*callback)(void)) {
+}
