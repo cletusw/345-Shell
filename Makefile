@@ -8,6 +8,10 @@ clean:
 	@rm -f *.o shell test
 
 test:
+	gcc -o test DeltaClock*.c
+	-valgrind --tool=memcheck --leak-check=full ./test
+
+testQueue:
 	gcc -o test PriorityQueue*.c
 	-valgrind --tool=memcheck --leak-check=full ./test
 
