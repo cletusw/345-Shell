@@ -16,3 +16,4 @@ DeltaClock* newDeltaClock();
 void deleteDeltaClock(DeltaClock* dc);
 void print(DeltaClock* dc);
 void insert(DeltaClock* dc, int tics, voidFnPtr callback);
+void tic(DeltaClock* dc);

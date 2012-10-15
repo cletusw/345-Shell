@@ -78,3 +78,15 @@ void insert(DeltaClock* dc, int tics, voidFnPtr callback) {
 		}
 	}
 }
+
+void tic(DeltaClock* dc) {
+	if (dc->head) {
+		dc->head->tics--;
+		while (dc->head && dc->head->tics == 0) {
+			dc->head->callback();
+			DeltaClockItem* oldHead = dc->head;
+			dc->head = dc->head->next;
+			free(oldHead);
+		}
+	}
+}
