@@ -13,6 +13,8 @@ void callback7(void);
 void callback8(void);
 int called[9];
 
+#define TIC(dc) printf("tic\n");tic(dc)
+
 int main(void) {
 	DeltaClock* dc = newDeltaClock();
 	assert("DeltaClock creation error" && dc->head == NULL);
@@ -32,36 +34,36 @@ int main(void) {
 	print(dc);
 
 	assert ("tic Error" && !called[7]);
-	tic(dc);
+	TIC(dc);
 	assert ("tic Error" && called[7]);
 
 	assert ("tic Error" && !called[0]);
 	assert ("tic Error" && !called[6]);
-	tic(dc);
+	TIC(dc);
 	assert ("tic Error" && called[0]);
 	assert ("tic Error" && called[6]);
 
 	assert ("tic Error" && !called[8]);
-	tic(dc);
+	TIC(dc);
 	assert ("tic Error" && called[8]);
 
 	assert ("tic Error" && !called[1]);
-	tic(dc);
-	tic(dc);
+	TIC(dc);
+	TIC(dc);
 	assert ("tic Error" && called[1]);
 
 	assert ("tic Error" && !called[3]);
-	tic(dc);tic(dc);tic(dc);tic(dc);
+	TIC(dc);TIC(dc);TIC(dc);TIC(dc);
 	assert ("tic Error" && called[3]);
 
 	assert ("tic Error" && !called[2]);
 	assert ("tic Error" && !called[4]);
-	tic(dc);
+	TIC(dc);
 	assert ("tic Error" && called[2]);
 	assert ("tic Error" && called[4]);
 
 	assert ("tic Error" && !called[5]);
-	tic(dc);
+	TIC(dc);
 	assert ("tic Error" && called[5]);
 
 	print(dc);
