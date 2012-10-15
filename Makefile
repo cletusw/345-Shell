@@ -7,8 +7,8 @@ run: shell
 clean:
 	@rm -f *.o shell test
 
-test:
-	gcc -o test DeltaClock*.c
+test: DeltaClockTests.c DeltaClock.c DeltaClock.h
+	gcc -g -o test DeltaClock*.c
 	-valgrind --tool=memcheck --leak-check=full ./test
 
 testQueue:
