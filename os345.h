@@ -2,6 +2,8 @@
 #ifndef __os345_h__
 #define __os345_h__
 
+#include <setjmp.h>
+
 #include "PriorityQueue.h"
 
 // ***********************************************************************

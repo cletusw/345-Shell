@@ -1,6 +1,7 @@
-#ifndef __os345_h__
-#define __os345_h__
+#ifdef TESTING
 typedef int Semaphore;
+#else
+#include "os345.h"
 #endif
 
 struct _DeltaClockItem {

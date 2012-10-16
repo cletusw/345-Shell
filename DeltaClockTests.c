@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
+
+#define TESTING 1
 #include "DeltaClock.h"
 
 Semaphore events[9];
