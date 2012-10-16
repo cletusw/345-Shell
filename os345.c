@@ -85,6 +85,7 @@ clock_t myClkTime;
 clock_t myOldClkTime;
 PriorityQueue* rq;					// ready priority queue
 DeltaClock* dc;
+Semaphore* deltaClockMutex;
 
 // **********************************************************************
 // **********************************************************************
@@ -558,6 +559,7 @@ static void initOS()
 
 	// Set up delta clock
 	dc = newDeltaClock();
+	deltaClockMutex = createSemaphore("deltaClockMutex", BINARY, 0);
 
 	// capture current time
 	lastPollClock = clock();			// last pollClock

@@ -36,7 +36,9 @@ extern Semaphore* parkMutex;						// protect park access
 extern Semaphore* fillSeat[NUM_CARS];			// (signal) seat ready to fill
 extern Semaphore* seatFilled[NUM_CARS];		// (wait) passenger seated
 extern Semaphore* rideOver[NUM_CARS];			// (signal) ride over
+
 extern DeltaClock* dc;
+extern Semaphore* deltaClockMutex;
 
 
 // ***********************************************************************

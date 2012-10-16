@@ -1,7 +1,8 @@
+#include "os345.h"
+extern Semaphore* deltaClockMutex;
+
 #ifdef TESTING
 typedef int Semaphore;
-#else
-#include "os345.h"
 #endif
 
 struct _DeltaClockItem {
