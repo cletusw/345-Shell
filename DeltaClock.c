@@ -23,7 +23,7 @@ void deleteDeltaClock(DeltaClock* dc) {
 	free(dc);
 }
 
-void print(DeltaClock* dc) {
+void printClock(DeltaClock* dc) {
 	printf("**");
 
 	DeltaClockItem* cur = dc->head;

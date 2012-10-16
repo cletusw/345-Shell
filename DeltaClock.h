@@ -17,6 +17,6 @@ typedef struct {
 
 DeltaClock* newDeltaClock();
 void deleteDeltaClock(DeltaClock* dc);
-void print(DeltaClock* dc);
+void printClock(DeltaClock* dc);
 void insert(DeltaClock* dc, int tics, Semaphore* event);
 void tic(DeltaClock* dc);

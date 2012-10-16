@@ -16,7 +16,7 @@ int main(void) {
 	DeltaClock* dc = newDeltaClock();
 	assert("DeltaClock creation error" && dc->head == NULL);
 	
-	print(dc);
+	printClock(dc);
 
 	insert(dc, 2, &events[0]);
 	insert(dc, 5, &events[1]);
@@ -28,7 +28,7 @@ int main(void) {
 	insert(dc, 1, &events[7]);
 	insert(dc, 3, &events[8]);
 
-	print(dc);
+	printClock(dc);
 
 	assert ("tic Error" && !called[7]);
 	TIC(dc);
@@ -63,7 +63,7 @@ int main(void) {
 	TIC(dc);
 	assert ("tic Error" && called[5]);
 
-	print(dc);
+	printClock(dc);
 	
 	deleteDeltaClock(dc);
 	dc = 0;
