@@ -27,6 +27,7 @@
 #include "os345.h"
 #include "os345lc3.h"
 #include "os345fat.h"
+#include "DeltaClock.h"
 
 // **********************************************************************
 //	local prototypes
@@ -84,6 +85,7 @@ time_t oldTime10;					// old 10sec time
 clock_t myClkTime;
 clock_t myOldClkTime;
 PriorityQueue* rq;					// ready priority queue
+DeltaClock* dc;
 
 // **********************************************************************
 // **********************************************************************
@@ -555,6 +557,9 @@ static void initOS()
 	// malloc ready queue
 	rq = newPriorityQueue(MAX_TASKS);
 
+	// Set up delta clock
+	dc = newDeltaClock();
+
 	// capture current time
 	lastPollClock = clock();			// last pollClock
    time(&oldTime1);
@@ -611,8 +616,9 @@ void powerDown(int code)
 	// free ready queue
 	deletePriorityQueue(rq);
 
-	// ?? release any other system resources
-	// ?? deltaclock (project 3)
+	// release any other system resources
+	// deltaclock (project 3)
+	deleteDeltaClock(dc);
 
 	RESTORE_OS
 	return;

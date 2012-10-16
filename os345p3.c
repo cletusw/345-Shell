@@ -25,6 +25,8 @@
 #include "os345.h"
 #include "os345park.h"
 
+#include "DeltaClock.h"
+
 // ***********************************************************************
 // project 3 variables
 
@@ -34,6 +36,7 @@ extern Semaphore* parkMutex;						// protect park access
 extern Semaphore* fillSeat[NUM_CARS];			// (signal) seat ready to fill
 extern Semaphore* seatFilled[NUM_CARS];		// (wait) passenger seated
 extern Semaphore* rideOver[NUM_CARS];			// (signal) ride over
+extern DeltaClock* dc;
 
 
 // ***********************************************************************
@@ -75,9 +78,10 @@ int P3_project3(int argc, char* argv[])
 // delta clock command
 int P3_dc(int argc, char* argv[])
 {
-	printf("\nDelta Clock");
-	// ?? Implement a routine to display the current delta clock contents
-	printf("\nTo Be Implemented!");
+	// Display the current delta clock contents
+	printf("\nDelta Clock\n");
+	printClock(dc);
+
 	return 0;
 } // end CL3_dc
 
