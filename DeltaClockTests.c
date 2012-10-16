@@ -2,34 +2,31 @@
 #include <assert.h>
 #include "DeltaClock.h"
 
-void callback0(void);
-void callback1(void);
-void callback2(void);
-void callback3(void);
-void callback4(void);
-void callback5(void);
-void callback6(void);
-void callback7(void);
-void callback8(void);
+Semaphore events[9];
 int called[9];
 
 #define TIC(dc) printf("tic\n");tic(dc)
 
 int main(void) {
+	int i;
+	for (i = 0; i < 9; i++) {
+		events[i] = i;
+	}
+
 	DeltaClock* dc = newDeltaClock();
 	assert("DeltaClock creation error" && dc->head == NULL);
 	
 	print(dc);
 
-	insert(dc, 2, &callback0);
-	insert(dc, 5, &callback1);
-	insert(dc, 10, &callback2);
-	insert(dc, 9, &callback3);
-	insert(dc, 10, &callback4);
-	insert(dc, 11, &callback5);
-	insert(dc, 2, &callback6);
-	insert(dc, 1, &callback7);
-	insert(dc, 3, &callback8);
+	insert(dc, 2, &events[0]);
+	insert(dc, 5, &events[1]);
+	insert(dc, 10, &events[2]);
+	insert(dc, 9, &events[3]);
+	insert(dc, 10, &events[4]);
+	insert(dc, 11, &events[5]);
+	insert(dc, 2, &events[6]);
+	insert(dc, 1, &events[7]);
+	insert(dc, 3, &events[8]);
 
 	print(dc);
 
@@ -74,47 +71,7 @@ int main(void) {
 	return 0;
 }
 
-void callback0(void) {
-	printf("callback0\n");
-	called[0]++;
-}
-
-void callback1(void) {
-	printf("callback1\n");
-	called[1]++;
-}
-
-void callback2(void) {
-	printf("callback2\n");
-	called[2]++;
-}
-
-void callback3(void) {
-	printf("callback3\n");
-	called[3]++;
-}
-
-void callback4(void) {
-	printf("callback4\n");
-	called[4]++;
-}
-
-void callback5(void) {
-	printf("callback5\n");
-	called[5]++;
-}
-
-void callback6(void) {
-	printf("callback6\n");
-	called[6]++;
-}
-
-void callback7(void) {
-	printf("callback7\n");
-	called[7]++;
-}
-
-void callback8(void) {
-	printf("callback8\n");
-	called[8]++;
+void semSignal(Semaphore* event) {
+	printf("semSignal: %d\n", *event);
+	called[*event]++;
 }

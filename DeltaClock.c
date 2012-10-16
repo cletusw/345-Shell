@@ -36,9 +36,9 @@ void print(DeltaClock* dc) {
 	printf("**\n");
 }
 
-void insert(DeltaClock* dc, int tics, voidFnPtr callback) {
+void insert(DeltaClock* dc, int tics, Semaphore* event) {
 	DeltaClockItem* item = (DeltaClockItem*) malloc(sizeof(DeltaClockItem));
-	item->callback = callback;
+	item->event = event;
 	item->next = NULL;
 
 	if (!dc->head) {
@@ -83,7 +83,7 @@ void tic(DeltaClock* dc) {
 	if (dc->head) {
 		dc->head->tics--;
 		while (dc->head && dc->head->tics == 0) {
-			dc->head->callback();
+			semSignal(dc->head->event);
 			DeltaClockItem* oldHead = dc->head;
 			dc->head = dc->head->next;
 			free(oldHead);
