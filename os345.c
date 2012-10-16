@@ -308,10 +308,11 @@ static void timer_isr()
 
 	// sample fine clock
 	myClkTime = clock();
-	if ((myClkTime - myOldClkTime) >= ONE_TENTH_SEC)
+	if ((myClkTime - myOldClkTime) >= ONE_TENTH_SEC && deltaClockMutex)
 	{
 		myOldClkTime = myOldClkTime + ONE_TENTH_SEC;   // update old
 		semSignal(tics10thsec);
+		tic(dc);
 	}
 
 	return;
