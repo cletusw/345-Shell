@@ -559,7 +559,7 @@ static void initOS()
 
 	// Set up delta clock
 	dc = newDeltaClock();
-	deltaClockMutex = createSemaphore("deltaClockMutex", BINARY, 0);
+	deltaClockMutex = createSemaphore("deltaClockMutex", BINARY, 1);
 
 	// capture current time
 	lastPollClock = clock();			// last pollClock
