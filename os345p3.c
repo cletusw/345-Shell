@@ -43,8 +43,6 @@ extern Semaphore* deltaClockMutex;
 
 // ***********************************************************************
 // project 3 functions and tasks
-void CL3_project3(int, char**);
-void CL3_dc(int, char**);
 
 
 // ***********************************************************************
