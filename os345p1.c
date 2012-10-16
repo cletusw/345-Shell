@@ -253,7 +253,7 @@ int P1_shellTask(int argc, char* argv[])
 						createTask("BackgroundTask",
 							commands[i]->func,
 							MED_PRIORITY,
-							newArgc,
+							newArgc - 1,
 							newArgv);
 					}
 					else {
