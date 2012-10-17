@@ -40,10 +40,18 @@ extern Semaphore* rideOver[NUM_CARS];			// (signal) ride over
 extern DeltaClock* dc;
 extern Semaphore* deltaClockMutex;
 
+Semaphore* getPassenger;
+Semaphore* seatTaken;
+Semaphore* rideDone[MAX_TASKS];
+Semaphore* passengerSeated;
+int curVisitor;
+Semaphore* visitorMutex;
+
 
 // ***********************************************************************
 // project 3 functions and tasks
 int P3_carTask(int argc, char* argv[]);
+int P3_visitorTask(int argc, char* argv[]);
 
 
 // ***********************************************************************
@@ -51,6 +59,7 @@ int P3_carTask(int argc, char* argv[]);
 // project3 command
 int P3_project3(int argc, char* argv[])
 {
+	int i;
 	char buf[32];
 	char carId;
 	char* newArgv[2];
@@ -64,25 +73,34 @@ int P3_project3(int argc, char* argv[])
 		1,								// task count
 		newArgv);					// task argument
 
+	getPassenger = createSemaphore("getPassenger", BINARY, 0);
+	seatTaken = createSemaphore("seatTaken", BINARY, 0);
+	passengerSeated = createSemaphore("passengerSeated", BINARY, 1);
+	visitorMutex = createSemaphore("visitorMutex", BINARY, 1);
+
 	// wait for park to get initialized...
 	while (!parkMutex) SWAP;
 	printf("\nStart Jurassic Park...");
 
 	//?? create car, driver, and visitor tasks here
-	sprintf(buf, "carTask");
-	carId = 0;
-	newArgv[0] = buf;
-	newArgv[1] = &carId;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
-	carId = 1;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
-	carId = 2;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
-	carId = 3;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
+	sprintf(buf, "carTask");			SWAP;
+	carId = 0;			SWAP;
+	newArgv[0] = buf;			SWAP;
+	newArgv[1] = &carId;			SWAP;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
+	carId = 1;			SWAP;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
+	carId = 2;			SWAP;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;			SWAP;
+	carId = 3;			SWAP;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
 
-	myPark.numInCarLine = 5;
-	myPark.numInPark = 5;
+	sprintf(buf, "visitorTask");			SWAP;
+	newArgv[0] = buf;			SWAP;
+	newArgv[1] = &i;			SWAP;
+	for (i = 0; i < 3; i++) {
+		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
+	}
 
 	return 0;
 } // end project3
@@ -106,18 +124,69 @@ int P3_dc(int argc, char* argv[])
 // ***********************************************************************
 // Car Task
 int P3_carTask(int argc, char* argv[]) {
-	int i;
+	int i;			SWAP;
 	int carId = argv[1][0];				SWAP;
+	Semaphore* carRideDone[NUM_SEATS];			SWAP;
 	printf("start carTask (%d)", carId);			SWAP;
 	while (1) {
 		for (i = 0; i < NUM_SEATS; i++) {
 			semWait(fillSeat[carId]);			SWAP;
+
+			semSignal(getPassenger);			SWAP;	// signal for visitor
+			semWait(seatTaken);			SWAP;	// wait for visitor to reply
+
+			// save passenger ride over semaphore
+			carRideDone[i] = rideDone[curVisitor];
+
+			semSignal(passengerSeated);			SWAP;	// signal visitor in seat
+
 			semSignal(seatFilled[carId]);			SWAP;
+			semWait(parkMutex);			SWAP;
+			myPark.numInCarLine--;			SWAP;
+			myPark.numInCars++;			SWAP;
+			semSignal(parkMutex);				SWAP;
 		}
 
 		semWait(rideOver[carId]);			SWAP;
+
+		// Release passengers
+		for (i = 0; i < NUM_SEATS; i++) {
+			semWait(parkMutex);			SWAP;
+			myPark.numInCars--;			SWAP;
+			myPark.numInGiftLine++;				SWAP;
+			semSignal(parkMutex);				SWAP;
+			semSignal(carRideDone[i]);			SWAP;
+		}
 	}
 	printf("end carTask");			SWAP;
+}
+
+
+// ***********************************************************************
+// ***********************************************************************
+// Visitor Task
+int P3_visitorTask(int argc, char* argv[]) {
+	int visitorId = argv[1][0];				SWAP;
+	//insert(dc, 30, timeEvent[visitorId]);
+	char buf[32];
+	sprintf(buf, "rideDone%d", visitorId);
+	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);
+
+	semWait(parkMutex);				SWAP;
+	myPark.numInPark++;				SWAP;
+	myPark.numInCarLine++;				SWAP;
+	semSignal(parkMutex);				SWAP;
+
+	semWait(getPassenger);				SWAP;
+
+	semWait(visitorMutex);			SWAP;
+	curVisitor = visitorId;			SWAP;
+	semSignal(seatTaken);				SWAP;
+	semWait(passengerSeated);			SWAP;
+	semSignal(visitorMutex);			SWAP;
+
+	semWait(rideDone[visitorId]);			SWAP;
+	printf("Ride done for %d", visitorId);			SWAP;
 }
 
 

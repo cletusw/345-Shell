@@ -24,59 +24,61 @@ void deleteDeltaClock(DeltaClock* dc) {
 }
 
 void printClock(DeltaClock* dc) {
-	printf("**");
+	printf("**");			SWAP;
 
-	DeltaClockItem* cur = dc->head;
+	DeltaClockItem* cur = dc->head;			SWAP;
 	
 	while (cur) {
-		printf("{%d} ", cur->tics);
-		cur = cur->next;
+		printf("{%d} ", cur->tics);			SWAP;
+		cur = cur->next;			SWAP;
 	}
 	
-	printf("**\n");
+	printf("**\n");			SWAP;
 }
 
 void insert(DeltaClock* dc, int tics, Semaphore* event) {
-	DeltaClockItem* item = (DeltaClockItem*) malloc(sizeof(DeltaClockItem));
-	item->event = event;
-	item->next = NULL;
+	semWait(deltaClockMutex);
+	DeltaClockItem* item = (DeltaClockItem*) malloc(sizeof(DeltaClockItem));			SWAP;
+	item->event = event;			SWAP;
+	item->next = NULL;			SWAP;
 
 	if (!dc->head) {
-		item->tics = tics;
-		dc->head = item;
+		item->tics = tics;			SWAP;
+		dc->head = item;			SWAP;
 	}
 	else if (tics < dc->head->tics) {
-		item->tics = tics;
-		dc->head->tics -= tics;
-		item->next = dc->head;
-		dc->head = item;
+		item->tics = tics;			SWAP;
+		dc->head->tics -= tics;			SWAP;
+		item->next = dc->head;			SWAP;
+		dc->head = item;			SWAP;
 	}
 	else {
-		int diff = tics - dc->head->tics;
-		DeltaClockItem* prev = dc->head;
-		DeltaClockItem* cur = dc->head->next;
+		int diff = tics - dc->head->tics;			SWAP;
+		DeltaClockItem* prev = dc->head;			SWAP;
+		DeltaClockItem* cur = dc->head->next;			SWAP;
 
 		while (1) {
 			if (!cur) {
-				prev->next = item;
-				item->tics = diff;
-				break;
+				prev->next = item;			SWAP;
+				item->tics = diff;			SWAP;
+				break;			SWAP;
 			}
 
-			diff -= cur->tics;
+			diff -= cur->tics;			SWAP;
 
 			if (diff < 0) {
-				item->tics = diff + cur->tics;
-				cur->tics = -diff;
-				item->next = cur;
-				prev->next = item;
-				break;
+				item->tics = diff + cur->tics;			SWAP;
+				cur->tics = -diff;			SWAP;
+				item->next = cur;			SWAP;
+				prev->next = item;			SWAP;
+				break;			SWAP;
 			}
 
-			prev = prev->next;
-			cur = cur->next;
+			prev = prev->next;			SWAP;
+			cur = cur->next;			SWAP;
 		}
 	}
+	semSignal(deltaClockMutex);
 }
 
 void tic(DeltaClock* dc) {
