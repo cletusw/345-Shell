@@ -43,9 +43,12 @@ extern Semaphore* deltaClockMutex;
 Semaphore* getPassenger;
 Semaphore* seatTaken;
 Semaphore* rideDone[MAX_TASKS];
+Semaphore* timeEvent[MAX_TASKS];
 Semaphore* passengerSeated;
 int curVisitor;
 Semaphore* visitorMutex;
+
+#define MAX_ENTRANCE_TIME 10			// in seconds
 
 
 // ***********************************************************************
@@ -98,7 +101,7 @@ int P3_project3(int argc, char* argv[])
 	sprintf(buf, "visitorTask");			SWAP;
 	newArgv[0] = buf;			SWAP;
 	newArgv[1] = &i;			SWAP;
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 16; i++) {
 		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
 	}
 
@@ -166,10 +169,17 @@ int P3_carTask(int argc, char* argv[]) {
 // Visitor Task
 int P3_visitorTask(int argc, char* argv[]) {
 	int visitorId = argv[1][0];				SWAP;
-	//insert(dc, 30, timeEvent[visitorId]);
+
+	// Set up visitor-specific semaphores
 	char buf[32];
+	sprintf(buf, "timeEvent%d", visitorId);
+	timeEvent[visitorId] = createSemaphore(buf, BINARY, 0);
 	sprintf(buf, "rideDone%d", visitorId);
 	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);
+
+	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;
+	insert(dc, waitTime, timeEvent[visitorId]);
+	semWait(timeEvent[visitorId]);
 
 	semWait(parkMutex);				SWAP;
 	myPark.numInPark++;				SWAP;

@@ -37,6 +37,7 @@ void printClock(DeltaClock* dc) {
 }
 
 void insert(DeltaClock* dc, int tics, Semaphore* event) {
+	assert("Invalid tic count" && tics > 0);
 	semWait(deltaClockMutex);
 	DeltaClockItem* item = (DeltaClockItem*) malloc(sizeof(DeltaClockItem));			SWAP;
 	item->event = event;			SWAP;
