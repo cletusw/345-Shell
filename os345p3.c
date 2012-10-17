@@ -125,9 +125,9 @@ int P3_dc(int argc, char* argv[])
 // Car Task
 int P3_carTask(int argc, char* argv[]) {
 	int i;			SWAP;
-	int carId = argv[1][0];				SWAP;
 	Semaphore* carRideDone[NUM_SEATS];			SWAP;
-	printf("start carTask (%d)", carId);			SWAP;
+	int carId = argv[1][0];				SWAP;
+
 	while (1) {
 		for (i = 0; i < NUM_SEATS; i++) {
 			semWait(fillSeat[carId]);			SWAP;
@@ -158,7 +158,6 @@ int P3_carTask(int argc, char* argv[]) {
 			semSignal(carRideDone[i]);			SWAP;
 		}
 	}
-	printf("end carTask");			SWAP;
 }
 
 
@@ -186,7 +185,6 @@ int P3_visitorTask(int argc, char* argv[]) {
 	semSignal(visitorMutex);			SWAP;
 
 	semWait(rideDone[visitorId]);			SWAP;
-	printf("Ride done for %d", visitorId);			SWAP;
 }
 
 
