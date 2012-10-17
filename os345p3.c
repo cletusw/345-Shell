@@ -47,6 +47,7 @@ Semaphore* timeEvent[MAX_TASKS];
 Semaphore* passengerSeated;
 int curVisitor;
 Semaphore* visitorMutex;
+Semaphore* parkTicket;
 
 #define MAX_ENTRANCE_TIME 10			// in seconds
 
@@ -80,6 +81,7 @@ int P3_project3(int argc, char* argv[])
 	seatTaken = createSemaphore("seatTaken", BINARY, 0);
 	passengerSeated = createSemaphore("passengerSeated", BINARY, 1);
 	visitorMutex = createSemaphore("visitorMutex", BINARY, 1);
+	parkTicket = createSemaphore("parkTicket", COUNTING, MAX_IN_PARK);
 
 	// wait for park to get initialized...
 	while (!parkMutex) SWAP;
@@ -101,7 +103,7 @@ int P3_project3(int argc, char* argv[])
 	sprintf(buf, "visitorTask");			SWAP;
 	newArgv[0] = buf;			SWAP;
 	newArgv[1] = &i;			SWAP;
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < 22; i++) {
 		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
 	}
 
@@ -177,11 +179,21 @@ int P3_visitorTask(int argc, char* argv[]) {
 	sprintf(buf, "rideDone%d", visitorId);
 	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);
 
+	// Wait random time before attempting to enter
 	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;
 	insert(dc, waitTime, timeEvent[visitorId]);
 	semWait(timeEvent[visitorId]);
 
+	semWait(parkMutex);
+	myPark.numOutsidePark++;
+	semSignal(parkMutex);
+
+	// Wait for a park ticket
+	semWait(parkTicket);
+
+	// Enter park and ride the tour car
 	semWait(parkMutex);				SWAP;
+	myPark.numOutsidePark--;			SWAP;
 	myPark.numInPark++;				SWAP;
 	myPark.numInCarLine++;				SWAP;
 	semSignal(parkMutex);				SWAP;
