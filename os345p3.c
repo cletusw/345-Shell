@@ -43,6 +43,7 @@ extern Semaphore* deltaClockMutex;
 
 // ***********************************************************************
 // project 3 functions and tasks
+int P3_carTask(int argc, char* argv[]);
 
 
 // ***********************************************************************
@@ -51,6 +52,7 @@ extern Semaphore* deltaClockMutex;
 int P3_project3(int argc, char* argv[])
 {
 	char buf[32];
+	char carId;
 	char* newArgv[2];
 
 	// start park
@@ -67,6 +69,20 @@ int P3_project3(int argc, char* argv[])
 	printf("\nStart Jurassic Park...");
 
 	//?? create car, driver, and visitor tasks here
+	sprintf(buf, "carTask");
+	carId = 0;
+	newArgv[0] = buf;
+	newArgv[1] = &carId;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
+	carId = 1;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
+	carId = 2;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
+	carId = 3;
+	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);
+
+	myPark.numInCarLine = 5;
+	myPark.numInPark = 5;
 
 	return 0;
 } // end project3
@@ -84,6 +100,25 @@ int P3_dc(int argc, char* argv[])
 
 	return 0;
 } // end CL3_dc
+
+
+// ***********************************************************************
+// ***********************************************************************
+// Car Task
+int P3_carTask(int argc, char* argv[]) {
+	int i;
+	int carId = argv[1][0];				SWAP;
+	printf("start carTask (%d)", carId);			SWAP;
+	while (1) {
+		for (i = 0; i < NUM_SEATS; i++) {
+			semWait(fillSeat[carId]);			SWAP;
+			semSignal(seatFilled[carId]);			SWAP;
+		}
+
+		semWait(rideOver[carId]);			SWAP;
+	}
+	printf("end carTask");			SWAP;
+}
 
 
 /*
