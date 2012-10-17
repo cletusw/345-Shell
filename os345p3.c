@@ -173,23 +173,23 @@ int P3_visitorTask(int argc, char* argv[]) {
 	int visitorId = argv[1][0];				SWAP;
 
 	// Set up visitor-specific semaphores
-	char buf[32];
-	sprintf(buf, "timeEvent%d", visitorId);
-	timeEvent[visitorId] = createSemaphore(buf, BINARY, 0);
-	sprintf(buf, "rideDone%d", visitorId);
-	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);
+	char buf[32];			SWAP;
+	sprintf(buf, "timeEvent%d", visitorId);			SWAP;
+	timeEvent[visitorId] = createSemaphore(buf, BINARY, 0);			SWAP;
+	sprintf(buf, "rideDone%d", visitorId);			SWAP;
+	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);			SWAP;
 
 	// Wait random time before attempting to enter
-	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;
-	insert(dc, waitTime, timeEvent[visitorId]);
-	semWait(timeEvent[visitorId]);
+	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
 
-	semWait(parkMutex);
-	myPark.numOutsidePark++;
-	semSignal(parkMutex);
+	semWait(parkMutex);			SWAP;
+	myPark.numOutsidePark++;			SWAP;
+	semSignal(parkMutex);			SWAP;
 
 	// Wait for a park ticket
-	semWait(parkTicket);
+	semWait(parkTicket);			SWAP;
 
 	// Enter park and ride the tour car
 	semWait(parkMutex);				SWAP;
