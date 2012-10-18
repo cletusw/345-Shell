@@ -72,6 +72,15 @@ void giftShop(int visitorId);
 // project3 command
 int P3_project3(int argc, char* argv[])
 {
+	int visitors;
+
+	if (argc == 1) {
+		visitors = 45;
+	}
+	else {
+		visitors = atoi(argv[1]);
+	}
+
 	// start park
 	char buf[32];
 	char* newArgv[2];
@@ -107,7 +116,7 @@ int P3_project3(int argc, char* argv[])
 	}
 
 	sprintf(buf, "visitorTask");			SWAP;
-	for (id = 0; id < NUM_VISITORS; id++) {
+	for (id = 0; id < visitors; id++) {
 		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
 	}
 
