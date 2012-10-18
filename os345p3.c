@@ -179,14 +179,14 @@ int P3_visitorTask(int argc, char* argv[]) {
 	sprintf(buf, "rideDone%d", visitorId);			SWAP;
 	rideDone[visitorId] = createSemaphore(buf, BINARY, 0);			SWAP;
 
+	semWait(parkMutex);			SWAP;
+	myPark.numOutsidePark++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+
 	// Wait random time before attempting to enter
 	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;			SWAP;
 	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
 	semWait(timeEvent[visitorId]);			SWAP;
-
-	semWait(parkMutex);			SWAP;
-	myPark.numOutsidePark++;			SWAP;
-	semSignal(parkMutex);			SWAP;
 
 	// Wait for a park ticket
 	semWait(parkTicket);			SWAP;
