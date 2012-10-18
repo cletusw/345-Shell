@@ -220,6 +220,7 @@ void museum(int visitorId) {
 	semWait(museumTicket);			SWAP;
 
 	semWait(parkMutex);			SWAP;
+	myPark.numTicketsAvailable--;			SWAP;
 	myPark.numInTicketLine--;			SWAP;
 	myPark.numInMuseumLine++;			SWAP;
 	semSignal(parkMutex);			SWAP;
@@ -243,6 +244,7 @@ void museum(int visitorId) {
 	semWait(parkMutex);			SWAP;
 	myPark.numInMuseum--;			SWAP;
 	myPark.numInCarLine++;			SWAP;
+	myPark.numTicketsAvailable++;			SWAP;
 	semSignal(parkMutex);			SWAP;
 	semSignal(spotInMuseum);			SWAP;
 
