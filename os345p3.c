@@ -48,14 +48,23 @@ Semaphore* passengerSeated;
 int curVisitor;
 Semaphore* visitorMutex;
 Semaphore* spotInPark;
+Semaphore* spotInGiftShop;
+Semaphore* spotInMuseum;
+Semaphore* museumTicket;
 
 #define MAX_ENTRANCE_TIME 10			// in seconds
+#define MAX_LINE_TIME 3			// in seconds
+#define MAX_GIFT_SHOP_TIME 10			// in seconds
+#define MAX_MUSEUM_TIME 10			// in seconds
 
 
 // ***********************************************************************
 // project 3 functions and tasks
 int P3_carTask(int argc, char* argv[]);
 int P3_visitorTask(int argc, char* argv[]);
+void museum(int visitorId);
+void tourCar(int visitorId);
+void giftShop(int visitorId);
 
 
 // ***********************************************************************
@@ -82,6 +91,9 @@ int P3_project3(int argc, char* argv[])
 	passengerSeated = createSemaphore("passengerSeated", BINARY, 1);
 	visitorMutex = createSemaphore("visitorMutex", BINARY, 1);
 	spotInPark = createSemaphore("spotInPark", COUNTING, MAX_IN_PARK);
+	spotInGiftShop = createSemaphore("spotInGiftShop", COUNTING, MAX_IN_GIFTSHOP);
+	spotInMuseum = createSemaphore("spotInMuseum", COUNTING, MAX_IN_MUSEUM);
+	museumTicket = createSemaphore("museumTicket", COUNTING, MAX_TICKETS);
 
 	// wait for park to get initialized...
 	while (!parkMutex) SWAP;
@@ -103,7 +115,7 @@ int P3_project3(int argc, char* argv[])
 	sprintf(buf, "visitorTask");			SWAP;
 	newArgv[0] = buf;			SWAP;
 	newArgv[1] = &i;			SWAP;
-	for (i = 0; i < 22; i++) {
+	for (i = 0; i < 24; i++) {
 		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
 	}
 
@@ -183,21 +195,64 @@ int P3_visitorTask(int argc, char* argv[]) {
 	myPark.numOutsidePark++;			SWAP;
 	semSignal(parkMutex);			SWAP;
 
-	// Wait random time before attempting to enter
+	// Wait random time before attempting to enter park
 	int waitTime = rand() % (MAX_ENTRANCE_TIME * 10) + 1;			SWAP;
 	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
 	semWait(timeEvent[visitorId]);			SWAP;
-
-	// Wait for a spot in the park
 	semWait(spotInPark);			SWAP;
 
-	// Enter park and ride the tour car
+	// Enter park and get in line for museum ticket
 	semWait(parkMutex);				SWAP;
 	myPark.numOutsidePark--;			SWAP;
 	myPark.numInPark++;				SWAP;
-	myPark.numInCarLine++;				SWAP;
+	myPark.numInTicketLine++;				SWAP;
 	semSignal(parkMutex);				SWAP;
 
+	museum(visitorId);			SWAP;
+
+	tourCar(visitorId);			SWAP;
+
+	giftShop(visitorId);			SWAP;
+}
+
+void museum(int visitorId) {
+	semWait(museumTicket);			SWAP;
+
+	semWait(parkMutex);			SWAP;
+	myPark.numInTicketLine--;			SWAP;
+	myPark.numInMuseumLine++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+
+	// Wait random time before attempting to enter museum
+	int waitTime = rand() % (MAX_LINE_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
+	semWait(spotInMuseum);			SWAP;
+
+	semWait(parkMutex);			SWAP;
+	myPark.numInMuseumLine--;			SWAP;
+	myPark.numInMuseum++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+
+	// Browse museum for random time
+	waitTime = rand() % (MAX_MUSEUM_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
+
+	semWait(parkMutex);			SWAP;
+	myPark.numInMuseum--;			SWAP;
+	myPark.numInCarLine++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+	semSignal(spotInMuseum);			SWAP;
+
+	semSignal(museumTicket);			SWAP;
+}
+
+void tourCar(int visitorId) {
+	// Wait random time before attempting to ride tour car
+	int waitTime = rand() % (MAX_LINE_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
 	semWait(getPassenger);				SWAP;
 
 	semWait(visitorMutex);			SWAP;
@@ -207,6 +262,32 @@ int P3_visitorTask(int argc, char* argv[]) {
 	semSignal(visitorMutex);			SWAP;
 
 	semWait(rideDone[visitorId]);			SWAP;
+}
+
+void giftShop(int visitorId) {
+	// Wait random time before attempting to enter gift shop
+	int waitTime = rand() % (MAX_LINE_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
+	semWait(spotInGiftShop);			SWAP;
+
+	semWait(parkMutex);			SWAP;
+	myPark.numInGiftLine--;			SWAP;
+	myPark.numInGiftShop++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+
+	// Browse gift shop for random time, then leave park
+	waitTime = rand() % (MAX_GIFT_SHOP_TIME * 10) + 1;			SWAP;
+	insert(dc, waitTime, timeEvent[visitorId]);			SWAP;
+	semWait(timeEvent[visitorId]);			SWAP;
+
+	semWait(parkMutex);			SWAP;
+	myPark.numInGiftShop--;			SWAP;
+	myPark.numInPark--;			SWAP;
+	myPark.numExitedPark++;			SWAP;
+	semSignal(parkMutex);			SWAP;
+	semSignal(spotInGiftShop);			SWAP;
+	semSignal(spotInPark);			SWAP;
 }
 
 
