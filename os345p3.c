@@ -72,41 +72,41 @@ void giftShop(int visitorId);
 // project3 command
 int P3_project3(int argc, char* argv[])
 {
-	int visitors;
+	int visitors;			SWAP;
 
 	if (argc == 1) {
-		visitors = 45;
+		visitors = 45;			SWAP;
 	}
 	else {
-		visitors = atoi(argv[1]);
+		visitors = atoi(argv[1]);			SWAP;
 	}
 
 	// start park
-	char buf[32];
-	char* newArgv[2];
-	sprintf(buf, "jurassicPark");
-	newArgv[0] = buf;
+	char buf[32];			SWAP;
+	char* newArgv[2];			SWAP;
+	sprintf(buf, "jurassicPark");			SWAP;
+	newArgv[0] = buf;			SWAP;
 	createTask( buf,				// task name
 		jurassicTask,				// task
 		MED_PRIORITY,				// task priority
 		1,								// task count
-		newArgv);					// task argument
+		newArgv);			SWAP;		// task argument
 
-	getPassenger = createSemaphore("getPassenger", BINARY, 0);
-	seatTaken = createSemaphore("seatTaken", BINARY, 0);
-	passengerSeated = createSemaphore("passengerSeated", BINARY, 1);
-	visitorMutex = createSemaphore("visitorMutex", BINARY, 1);
-	spotInPark = createSemaphore("spotInPark", COUNTING, MAX_IN_PARK);
-	spotInGiftShop = createSemaphore("spotInGiftShop", COUNTING, MAX_IN_GIFTSHOP);
-	spotInMuseum = createSemaphore("spotInMuseum", COUNTING, MAX_IN_MUSEUM);
-	museumTicket = createSemaphore("museumTicket", COUNTING, MAX_TICKETS);
+	getPassenger = createSemaphore("getPassenger", BINARY, 0);			SWAP;
+	seatTaken = createSemaphore("seatTaken", BINARY, 0);			SWAP;
+	passengerSeated = createSemaphore("passengerSeated", BINARY, 1);			SWAP;
+	visitorMutex = createSemaphore("visitorMutex", BINARY, 1);			SWAP;
+	spotInPark = createSemaphore("spotInPark", COUNTING, MAX_IN_PARK);			SWAP;
+	spotInGiftShop = createSemaphore("spotInGiftShop", COUNTING, MAX_IN_GIFTSHOP);			SWAP;
+	spotInMuseum = createSemaphore("spotInMuseum", COUNTING, MAX_IN_MUSEUM);			SWAP;
+	museumTicket = createSemaphore("museumTicket", COUNTING, MAX_TICKETS);			SWAP;
 
 	// wait for park to get initialized...
 	while (!parkMutex) SWAP;
-	printf("\nStart Jurassic Park...");
+	printf("\nStart Jurassic Park...");			SWAP;
 
 	// create car, driver, and visitor tasks here
-	int id;
+	int id;			SWAP;
 	sprintf(buf, "carTask");			SWAP;
 	id = 0;			SWAP;
 	newArgv[0] = buf;			SWAP;
@@ -131,8 +131,8 @@ int P3_project3(int argc, char* argv[])
 int P3_dc(int argc, char* argv[])
 {
 	// Display the current delta clock contents
-	printf("\nDelta Clock\n");
-	printClock(dc);
+	printf("\nDelta Clock\n");			SWAP;
+	printClock(dc);			SWAP;
 
 	return 0;
 } // end CL3_dc
@@ -154,7 +154,7 @@ int P3_carTask(int argc, char* argv[]) {
 			semWait(seatTaken);			SWAP;	// wait for visitor to reply
 
 			// save passenger ride over semaphore
-			carRideDone[i] = rideDone[curVisitor];
+			carRideDone[i] = rideDone[curVisitor];			SWAP;
 
 			semSignal(passengerSeated);			SWAP;	// signal visitor in seat
 
