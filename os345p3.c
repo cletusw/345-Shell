@@ -72,12 +72,9 @@ void giftShop(int visitorId);
 // project3 command
 int P3_project3(int argc, char* argv[])
 {
-	int i;
-	char buf[32];
-	char carId;
-	char* newArgv[2];
-
 	// start park
+	char buf[32];
+	char* newArgv[2];
 	sprintf(buf, "jurassicPark");
 	newArgv[0] = buf;
 	createTask( buf,				// task name
@@ -99,23 +96,18 @@ int P3_project3(int argc, char* argv[])
 	while (!parkMutex) SWAP;
 	printf("\nStart Jurassic Park...");
 
-	//?? create car, driver, and visitor tasks here
+	// create car, driver, and visitor tasks here
+	int id;
 	sprintf(buf, "carTask");			SWAP;
-	carId = 0;			SWAP;
+	id = 0;			SWAP;
 	newArgv[0] = buf;			SWAP;
-	newArgv[1] = &carId;			SWAP;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
-	carId = 1;			SWAP;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
-	carId = 2;			SWAP;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;			SWAP;
-	carId = 3;			SWAP;
-	createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
+	newArgv[1] = (char*) &id;			SWAP;
+	for (id = 0; id < NUM_CARS; id++) {
+		createTask(buf, P3_carTask, MED_PRIORITY, 2, newArgv);			SWAP;
+	}
 
 	sprintf(buf, "visitorTask");			SWAP;
-	newArgv[0] = buf;			SWAP;
-	newArgv[1] = &i;			SWAP;
-	for (i = 0; i < 24; i++) {
+	for (id = 0; id < NUM_VISITORS; id++) {
 		createTask(buf, P3_visitorTask, MED_PRIORITY, 2, newArgv);			SWAP;
 	}
 
