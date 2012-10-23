@@ -49,7 +49,7 @@ int getFrame(int notme)
 	frame = getAvailableFrame();
 	if (frame >=0) return frame;
 
-	// run clock
+	// ?? run clock
 	printf("\nWe're toast!!!!!!!!!!!!");
 
 	return frame;
