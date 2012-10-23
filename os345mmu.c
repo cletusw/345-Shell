@@ -71,7 +71,7 @@ int getFrame(int notme)
 //  / / / /     / 	             / /       /
 // F D R P - - f f|f f f f f f f f|S - - - p p p p|p p p p p p p p
 
-#define MMU_ENABLE	0
+#define MMU_ENABLE	1
 
 unsigned short int *getMemAdr(int va, int rwFlg)
 {
