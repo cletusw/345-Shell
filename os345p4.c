@@ -114,10 +114,10 @@ int P4_vmaccess(int argc, char* argv[])
 {
 	unsigned short int adr, rpt, upt;
 
-	printf("\nValidate arguments...");	// ?? validate arguments
 	adr = INTEGER(argv[1]);
-
 	printf(" = %04x", getMemAdr(adr, 1)-&MEMWORD(0));
+	printf("\nRPTI:%d(0x%x) UPTI:%d(0x%x) OFFSET:%d(0x%x)", RPTI(adr)/2, RPTI(adr), UPTI(adr)/2, UPTI(adr), FRAMEOFFSET(adr), FRAMEOFFSET(adr));
+
 	for (rpt = 0; rpt < 64; rpt+=2)
 	{
 		if (MEMWORD(rpt+TASK_RPT) || MEMWORD(rpt+TASK_RPT+1))
@@ -358,7 +358,7 @@ void outPTE(char* s, int pte)
 
 	// output pte line
 	printf("\n%s x%04x = %04x %04x  %s", s, pte, pte1, pte2, flags);
-	if (DEFINED(pte1) || DEFINED(pte2)) printf(" Frame=%d", FRAME(pte1));
+	if (DEFINED(pte1) || DEFINED(pte2)) printf(" Frame=%d(0x%4x)", FRAME(pte1), FRAME(pte1) * LC3_FRAME_SIZE);
 	if (DEFINED(pte2)) printf(" Page=%d", SWAPPAGE(pte2));
 
 	return;
