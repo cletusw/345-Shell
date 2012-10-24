@@ -80,12 +80,14 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 	int upta, upte1, upte2;
 	int rptFrame, uptFrame;
 
+	// turn off virtual addressing for system RAM
+	if (va < 0x3000) return &memory[va];
+
+	// ?? TODO: Get base RPT address for task instead of assuming 0x2400
 	rpta = 0x2400 + RPTI(va);
 	rpte1 = memory[rpta];
 	rpte2 = memory[rpta+1];
 
-	// turn off virtual addressing for system RAM
-	if (va < 0x3000) return &memory[va];
 #if MMU_ENABLE
 	if (DEFINED(rpte1))
 	{
