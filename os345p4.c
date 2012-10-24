@@ -37,6 +37,10 @@ extern int nextPage;
 extern int pageReads;
 extern int pageWrites;
 
+// Pointers for clock replacement algorithm
+extern int nextRptEntryAddr;
+extern int nextUptEntryIndex;
+
 extern unsigned short int memory[];
 extern int getMemoryData(int);
 
@@ -188,6 +192,10 @@ int P4_initMemory(int argc, char* argv[])
 	nextPage = 0;
 	pageReads = 0;
 	pageWrites = 0;
+
+	// Clock replacement algorithm
+	nextRptEntryAddr = 0x2400;
+	nextUptEntryIndex = 0;
 
 	return 0;
 } // end P4_initMemory

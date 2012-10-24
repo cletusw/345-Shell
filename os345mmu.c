@@ -39,6 +39,10 @@ int nextPage;						// swap page size
 int pageReads;						// page reads
 int pageWrites;						// page writes
 
+// Pointers for clock replacement algorithm
+int nextRptEntryAddr;
+int nextUptEntryIndex;
+
 int getFrame(int);
 int getAvailableFrame(void);
 
@@ -49,8 +53,20 @@ int getFrame(int notme)
 	frame = getAvailableFrame();
 	if (frame >=0) return frame;
 
-	// ?? run clock
-	printf("\nWe're toast!!!!!!!!!!!!");
+	// run clock
+	printf("\nRunning clock...");
+	while (1) {
+		if (DEFINED(memory[nextRptEntryAddr])) {
+			printf("\nFound entry at 0x%4x", nextRptEntryAddr);
+			return frame;
+		}
+
+		// Get next entry
+		nextRptEntryAddr += 2;
+		if (nextRptEntryAddr >= LC3_RPT_END) {
+			nextRptEntryAddr = LC3_RPT;
+		}
+	}
 
 	return frame;
 }
