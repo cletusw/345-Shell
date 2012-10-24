@@ -50,15 +50,29 @@ int getAvailableFrame(void);
 int getFrame(int notme)
 {
 	int frame;
+	int rpte1;
+	int upta, upte1, upte2;
 	frame = getAvailableFrame();
 	if (frame >=0) return frame;
 
 	// run clock
 	printf("\nRunning clock...");
 	while (1) {
-		if (DEFINED(memory[nextRptEntryAddr])) {
+		rpte1 = memory[nextRptEntryAddr];
+		if (DEFINED(rpte1)) {
 			printf("\nFound entry at 0x%4x", nextRptEntryAddr);
-			return frame;
+
+			for (; nextUptEntryIndex < 32; nextUptEntryIndex += 2) {
+				upta = (FRAME(rpte1)<<6) + nextUptEntryIndex;
+				upte1 = memory[upta];
+				upte2 = memory[upta + 1];
+				if (DEFINED(upte1)) {
+					printf("\nFound UPT entry at 0x%4x", upta);
+					return frame;
+				}
+			}
+
+			nextUptEntryIndex = 0;
 		}
 
 		// Get next entry
