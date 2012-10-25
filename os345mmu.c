@@ -50,7 +50,6 @@ int getAvailableFrame(void);
 int getFrame(int notme)
 {
 	int frame;
-	int pageNumber;
 	int rpte1;
 	int upta, upte1, upte2;
 	frame = getAvailableFrame();
@@ -78,16 +77,22 @@ int getFrame(int notme)
 						// Increment nextUptEntryIndex
 						nextUptEntryIndex++;
 
-						// Swap out existing frame contents
+						// Clear frame information
 						frame = FRAME(upte1);
-						pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
-
-						// Clear and update swap page number in upte byte 2
 						upte1 = 0;
-						upte2 = pageNumber;
-						upte2 = SET_PAGED(upte2);
 						memory[upta] = upte1;
-						memory[upta+1] = upte2;
+
+						// Swap out existing frame contents
+						if (PAGED(upte2)) {
+							accessPage(SWAPPAGE(upte2), frame, PAGE_OLD_WRITE);
+						}
+						else {
+							int pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
+							upte2 = pageNumber;
+							upte2 = SET_PAGED(upte2);
+							memory[upta+1] = upte2;
+						}
+
 						printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
 
 						return frame;
