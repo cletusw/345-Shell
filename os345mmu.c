@@ -50,6 +50,7 @@ int getAvailableFrame(void);
 int getFrame(int notme)
 {
 	int frame;
+	int pageNumber;
 	int rpte1;
 	int upta, upte1, upte2;
 	frame = getAvailableFrame();
@@ -62,13 +63,35 @@ int getFrame(int notme)
 		if (DEFINED(rpte1)) {
 			printf("\nFound entry at 0x%4x", nextRptEntryAddr);
 
-			for (; nextUptEntryIndex < 32; nextUptEntryIndex += 2) {
-				upta = (FRAME(rpte1)<<6) + nextUptEntryIndex;
+			for (; nextUptEntryIndex < 32; nextUptEntryIndex++) {
+				upta = (FRAME(rpte1)<<6) + nextUptEntryIndex*2;
 				upte1 = memory[upta];
 				upte2 = memory[upta + 1];
 				if (DEFINED(upte1)) {
 					printf("\nFound UPT entry at 0x%4x", upta);
-					return frame;
+
+					if (REFERENCED(upte1)) {
+						memory[upta] = upte1 = CLEAR_REF(upte1);
+						printf("\nresetting ref for 0x%4x", upta);
+					}
+					else {
+						// Increment nextUptEntryIndex
+						nextUptEntryIndex++;
+
+						// Swap out existing frame contents
+						frame = FRAME(upte1);
+						pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
+
+						// Clear and update swap page number in upte byte 2
+						upte1 = 0;
+						upte2 = pageNumber;
+						upte2 = SET_PAGED(upte2);
+						memory[upta] = upte1;
+						memory[upta+1] = upte2;
+						printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
+
+						return frame;
+					}
 				}
 			}
 
