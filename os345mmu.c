@@ -43,6 +43,8 @@ int pageWrites;						// page writes
 int nextRptEntryAddr;
 int nextUptEntryIndex;
 
+extern int curTask;
+
 int getFrame(int);
 int getAvailableFrame(void);
 
@@ -55,7 +57,7 @@ void nextRptEntry(void) {
 }
 
 int getCurRptAddr(void) {
-	return 0x2400;
+	return 0x2400 + LC3_FRAME_SIZE * curTask;
 }
 
 int getFrame(int notme)
