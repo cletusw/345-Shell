@@ -57,7 +57,7 @@ void nextRptEntry(void) {
 int getFrame(int notme)
 {
 	int frame;
-	int rpte1;
+	int rpte1, rpte2;
 	int upta, upte1, upte2;
 	frame = getAvailableFrame();
 	if (frame >=0) return frame;
@@ -68,6 +68,9 @@ int getFrame(int notme)
 		rpte1 = memory[nextRptEntryAddr];
 		if (DEFINED(rpte1)) {
 			//printf("\nFound entry at 0x%4x", nextRptEntryAddr);
+			if (nextUptEntryIndex == 0) {
+				memory[nextRptEntryAddr] = rpte1 = CLEAR_PINNED(rpte1);
+			}
 
 			for (; nextUptEntryIndex < 32; nextUptEntryIndex++) {
 				upta = (FRAME(rpte1)<<6) + nextUptEntryIndex*2;
@@ -79,6 +82,8 @@ int getFrame(int notme)
 					if (REFERENCED(upte1)) {
 						memory[upta] = upte1 = CLEAR_REF(upte1);
 						//printf("\nresetting ref for 0x%4x", upta);
+						// Pin UPT since it contains in-memory data frames
+						memory[nextRptEntryAddr] = rpte1 = SET_PINNED(rpte1);
 					}
 					else {
 						// Increment nextUptEntryIndex
@@ -108,6 +113,33 @@ int getFrame(int notme)
 			}
 
 			nextUptEntryIndex = 0;
+
+			if (!PINNED(memory[nextRptEntryAddr]) && notme != FRAME(memory[nextRptEntryAddr])) {
+				// UPT is a candidate!
+				//printf("UPT is a candidate!");
+				rpte2 = memory[nextRptEntryAddr + 1];
+
+				// Clear frame information
+				frame = FRAME(rpte1);
+				rpte1 = 0;
+				memory[nextRptEntryAddr] = rpte1;
+
+				// Swap out existing frame contents
+				if (PAGED(rpte2)) {
+					accessPage(SWAPPAGE(rpte2), frame, PAGE_OLD_WRITE);
+				}
+				else {
+					int pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
+					rpte2 = pageNumber;
+					rpte2 = SET_PAGED(rpte2);
+					memory[nextRptEntryAddr+1] = rpte2;
+				}
+
+				// Increment nextRptEntryAddr
+				nextRptEntry();
+
+				return frame;
+			}
 		}
 
 		// Get next entry
