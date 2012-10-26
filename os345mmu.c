@@ -95,21 +95,21 @@ int getFrame(int notme)
 						// Increment nextUptEntryIndex
 						nextUptEntryIndex++;
 
-						// Clear frame information
-						frame = FRAME(upte1);
-						upte1 = 0;
-						memory[upta] = upte1;
-
 						// Swap out existing frame contents
+						frame = FRAME(upte1);
 						if (!PAGED(upte2)) {
 							int pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
 							upte2 = pageNumber;
 							upte2 = SET_PAGED(upte2);
 							memory[upta+1] = upte2;
 						}
-						else {
+						else if (DIRTY(upte1)) {
 							accessPage(SWAPPAGE(upte2), frame, PAGE_OLD_WRITE);
 						}
+
+						// Clear frame information
+						upte1 = 0;
+						memory[upta] = upte1;
 
 						//printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
 
@@ -231,12 +231,16 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 		}
 		else
 		{
+			memory[upta] = upte1 = SET_DIRTY(upte1);
 		}
 	}
 
 	memory[upta] = SET_REF(upte1);
 	memory[upta+1] = upte2;
 
+	if (rwFlg) {
+		memory[upta] = upte1 = SET_DIRTY(upte1);
+	}
 
 	return &memory[(FRAME(upte1)<<6) + FRAMEOFFSET(va)];
 #else
