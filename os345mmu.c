@@ -56,22 +56,22 @@ int getFrame(int notme)
 	if (frame >=0) return frame;
 
 	// run clock
-	printf("\nRunning clock...");
+	//printf("\nRunning clock...");
 	while (1) {
 		rpte1 = memory[nextRptEntryAddr];
 		if (DEFINED(rpte1)) {
-			printf("\nFound entry at 0x%4x", nextRptEntryAddr);
+			//printf("\nFound entry at 0x%4x", nextRptEntryAddr);
 
 			for (; nextUptEntryIndex < 32; nextUptEntryIndex++) {
 				upta = (FRAME(rpte1)<<6) + nextUptEntryIndex*2;
 				upte1 = memory[upta];
 				upte2 = memory[upta + 1];
 				if (DEFINED(upte1)) {
-					printf("\nFound UPT entry at 0x%4x", upta);
+					//printf("\nFound UPT entry at 0x%4x", upta);
 
 					if (REFERENCED(upte1)) {
 						memory[upta] = upte1 = CLEAR_REF(upte1);
-						printf("\nresetting ref for 0x%4x", upta);
+						//printf("\nresetting ref for 0x%4x", upta);
 					}
 					else {
 						// Increment nextUptEntryIndex
@@ -93,7 +93,7 @@ int getFrame(int notme)
 							memory[upta+1] = upte2;
 						}
 
-						printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
+						//printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
 
 						return frame;
 					}
