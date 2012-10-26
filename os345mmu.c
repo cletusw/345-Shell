@@ -47,6 +47,13 @@ int getFrame(int);
 int getAvailableFrame(void);
 
 
+void nextRptEntry(void) {
+	nextRptEntryAddr += 2;
+	if (nextRptEntryAddr >= LC3_RPT_END) {
+		nextRptEntryAddr = LC3_RPT;
+	}
+}
+
 int getFrame(int notme)
 {
 	int frame;
@@ -104,10 +111,7 @@ int getFrame(int notme)
 		}
 
 		// Get next entry
-		nextRptEntryAddr += 2;
-		if (nextRptEntryAddr >= LC3_RPT_END) {
-			nextRptEntryAddr = LC3_RPT;
-		}
+		nextRptEntry();
 	}
 
 	return frame;
