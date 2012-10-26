@@ -54,6 +54,10 @@ void nextRptEntry(void) {
 	}
 }
 
+int getCurRptAddr(void) {
+	return 0x2400;
+}
+
 int getFrame(int notme)
 {
 	int frame;
@@ -178,7 +182,7 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 	if (va < 0x3000) return &memory[va];
 
 	// ?? TODO: Get base RPT address for task instead of assuming 0x2400
-	rpta = 0x2400 + RPTI(va);
+	rpta = getCurRptAddr() + RPTI(va);
 	rpte1 = memory[rpta];
 	rpte2 = memory[rpta+1];
 
