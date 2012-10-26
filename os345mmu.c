@@ -101,14 +101,14 @@ int getFrame(int notme)
 						memory[upta] = upte1;
 
 						// Swap out existing frame contents
-						if (PAGED(upte2)) {
-							accessPage(SWAPPAGE(upte2), frame, PAGE_OLD_WRITE);
-						}
-						else {
+						if (!PAGED(upte2)) {
 							int pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
 							upte2 = pageNumber;
 							upte2 = SET_PAGED(upte2);
 							memory[upta+1] = upte2;
+						}
+						else {
+							accessPage(SWAPPAGE(upte2), frame, PAGE_OLD_WRITE);
 						}
 
 						//printf("\nFound frame at 0x%4x", frame * LC3_FRAME_SIZE);
@@ -131,14 +131,14 @@ int getFrame(int notme)
 				memory[nextRptEntryAddr] = rpte1;
 
 				// Swap out existing frame contents
-				if (PAGED(rpte2)) {
-					accessPage(SWAPPAGE(rpte2), frame, PAGE_OLD_WRITE);
-				}
-				else {
+				if (!PAGED(rpte2)) {
 					int pageNumber = accessPage(-1, frame, PAGE_NEW_WRITE);
 					rpte2 = pageNumber;
 					rpte2 = SET_PAGED(rpte2);
 					memory[nextRptEntryAddr+1] = rpte2;
+				}
+				else {
+					accessPage(SWAPPAGE(rpte2), frame, PAGE_OLD_WRITE);
 				}
 
 				// Increment nextRptEntryAddr
