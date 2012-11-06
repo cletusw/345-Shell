@@ -180,6 +180,9 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 	int upta, upte1, upte2;
 	int rptFrame, uptFrame;
 
+	memAccess++;
+	memHits++;
+
 	// turn off virtual addressing for system RAM
 	if (va < 0x3000) return &memory[va];
 
@@ -189,13 +192,16 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 	rpte2 = memory[rpta+1];
 
 #if MMU_ENABLE
+	memAccess++;
 	if (DEFINED(rpte1))
 	{
 		// defined
+		memHits++;
 	}
 	else
 	{
 		// fault
+		memPageFaults++;
 		rptFrame = getFrame(-1);
 		rpte1 = SET_DEFINED(rptFrame);
 		if (PAGED(rpte2))
@@ -216,13 +222,16 @@ unsigned short int *getMemAdr(int va, int rwFlg)
 	upte1 = memory[upta];
 	upte2 = memory[upta+1];
 
+	memAccess++;
 	if (DEFINED(upte1))
 	{
 		// defined
+		memHits++;
 	}
 	else
 	{
 		// fault
+		memPageFaults++;
 		uptFrame = getFrame(FRAME(memory[rpta]));
 		upte1 = SET_DEFINED(uptFrame);
 		if (PAGED(upte2))
