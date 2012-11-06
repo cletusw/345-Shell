@@ -39,6 +39,7 @@ extern Semaphore* tics1sec;			// 1 second semaphore
 extern int curTask;					// current task #
 extern int scheduler_mode;			// scheduler mode
 long int group_count[NUM_PARENTS];	// parent group counters
+int num_siblings[NUM_PARENTS];		// number in each group
 
 // ***********************************************************************
 // ***********************************************************************
@@ -64,20 +65,25 @@ int P5_project5(int argc, char* argv[])		// project 5
 	}
 
 	printf("\nStarting Project 5");
+
+	for (i = 0; i < NUM_PARENTS; ++i)
+	{
+		num_siblings[i] = (rand() % 25) + 1;
+		printf("\nGroup[%d] = %d", i, num_siblings[i]);
+	}
+
 	childALive = createSemaphore("childALive", BINARY, 0);
 	parentDead = createSemaphore("parentDead", BINARY, 0);
 
-	// select Fair Share Scheduler
-	scheduler_mode = 1;
-
 	// create parents
-	for (i=0; i<NUM_PARENTS; i++)
+	for (i = 0; i < NUM_PARENTS; i++)
 	{
 		group_count[i] = 0;					// zero group counter
 
 		sprintf(arg1, "parent%d", i + 1);
 		sprintf(arg2, "%d", i + 1);
-		sprintf(arg3, "%d", 1 + 4 * i);
+//		sprintf(arg3, "%d", 1 + 4 * i);
+		sprintf(arg3, "%d", num_siblings[i]);
 		new_argv[0] = arg1;
 		new_argv[1] = arg2;
 		new_argv[2] = arg3;
@@ -85,7 +91,7 @@ int P5_project5(int argc, char* argv[])		// project 5
 		printf("\nCreate %s with %d child%s", arg1, atoi(arg3), (atoi(arg3) == 1 ? "" : "ren"));
 		createTask(new_argv[0]				// task name
 				 , parentTask,				// parent task
-				   HIGH_PRIORITY,			// priority
+				   MED_PRIORITY,			// priority
 				   3,						// argc
 				   new_argv);				// argv
 		SEM_WAIT(parentDead);				// wait for parent to die
@@ -113,7 +119,7 @@ int parentTask(int argc, char* argv[])		// group 1
 {
 	int i, num_children;
 	char buffer[32];
-
+	int parent = atoi(argv[1]);
 	num_children = atoi(argv[2]);
 
 	for (i = 'a'; i < 'a' + num_children; i++)
@@ -127,6 +133,14 @@ int parentTask(int argc, char* argv[])		// group 1
 		SEM_WAIT(childALive);				// wait until child is going
 	}
 	SEM_SIGNAL(parentDead);					// parent dies
+
+//	while (1) SWAP;							// keep parent alive
+	while (1)
+	{
+		++group_count[parent - 1];
+		SWAP;
+	}
+
 	return 0;
 } // end parentTask
 
@@ -167,6 +181,7 @@ int groupReportTask(int argc, char* argv[])
 {
 	int i;
 	int count = NUM_REPORT_SECONDS;
+	long int sum;
 
 	while (1)
 	{
@@ -176,10 +191,15 @@ int groupReportTask(int argc, char* argv[])
 			SEM_WAIT(tics1sec);
 
 		}
+
+		sum = 0;
+		for (i = 0; i < NUM_PARENTS; ++i) sum += group_count[i];
+
 		printf("\nGroups:");
 		for (i=0; i<NUM_PARENTS; i++)
 		{
-			printf("%10ld", group_count[i]);
+//			printf("%10ld", group_count[i]);
+			printf("%10ld (%d%%)", group_count[i], (group_count[i] * 100) / sum);
 			group_count[i] = 0;
 		}
 
