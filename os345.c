@@ -398,9 +398,10 @@ static int scheduler()
 void recomputeTaskTimes() {
 	int numChildren[MAX_TASKS];
 	int i, mostChildren = 0;
+	int clocksPerGroup;
 
 	// Count children of each task
-	/*for (i = 0; i < MAX_TASKS; i++) {
+	for (i = 0; i < MAX_TASKS; i++) {
 		numChildren[i] = 0;
 	}
 	for (i = 0; i < MAX_TASKS; i++) {
@@ -414,12 +415,27 @@ void recomputeTaskTimes() {
 		if (numChildren[i] > numChildren[mostChildren]) {
 			mostChildren = i;
 		}
-	}*/
+	}
+
+	clocksPerGroup = numChildren[mostChildren] + 1;
 
 	// Distribute CPU time
 	for (i = 0; i < MAX_TASKS; i++) {
-		if (tcb[i].name) {
-			tcb[i].time = 5;
+		if (tcb[i].name && numChildren[i] == 0) {
+			// Leaf. Give clocksPerGroup/(numChildren[parent] + 1) time slots.
+			tcb[i].time = clocksPerGroup/(numChildren[tcb[i].parent] + 1);
+
+			// Set parent's time if not already set by sibling
+			if (tcb[tcb[i].parent].time <= 0) {
+				tcb[tcb[i].parent].time = tcb[i].time + clocksPerGroup % (numChildren[tcb[i].parent] + 1);
+			}
+		}
+	}
+
+	// Give remaining tasks 1 clock (shell, etc)
+	for (i = 0; i < MAX_TASKS; i++) {
+		if (tcb[i].name && tcb[i].time <= 0) {
+			tcb[i].time = 1;
 		}
 	}
 }
