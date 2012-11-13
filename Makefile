@@ -1,4 +1,4 @@
-shell: os345p1.c os345.c os345p2.c os345p3.c os345p4.c os345mmu.c PriorityQueue.c DeltaClock.c
+shell: os345p1.c os345.c os345p2.c os345p3.c os345p4.c os345p5.c os345mmu.c PriorityQueue.c DeltaClock.c
 	gcc -g os345*.c PriorityQueue.c DeltaClock.c -o shell
 
 run: shell

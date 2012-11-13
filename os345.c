@@ -33,6 +33,7 @@
 //
 static void pollInterrupts(void);
 static int scheduler(void);
+static void recomputeTaskTimes(void);
 static int dispatcher(void);
 
 static void keyboard_isr(void);
@@ -350,7 +351,7 @@ static void pollInterrupts(void)
 //
 static int scheduler()
 {
-	int nextTask;
+	int nextTask, firstTask;
 	// ?? Design and implement a scheduler that will select the next highest
 	// ?? priority ready task to pass to the system dispatcher.
 
@@ -366,7 +367,22 @@ static int scheduler()
 	// ?? priorities, clean up dead tasks, and handle semaphores appropriately.
 
 	// schedule next task
-	nextTask = pop(rq);
+	firstTask = nextTask = pop(rq);
+
+	// Fair-share scheduling
+	if (scheduler_mode && nextTask >= 0) {
+		while (tcb[nextTask].time < 1) {
+			enQ(rq, nextTask, tcb[nextTask].priority);
+			nextTask = pop(rq);
+
+			if (nextTask == firstTask) {
+				// No tasks left with nonzero time. Recompute.
+				recomputeTaskTimes();
+			}
+		}
+
+		tcb[nextTask].time--;
+	}
 
 	// mask sure nextTask is valid
 	assert("Popped invalid task" && (nextTask == -1 || tcb[nextTask].name));
@@ -378,6 +394,35 @@ static int scheduler()
 
 	return nextTask;
 } // end scheduler
+
+void recomputeTaskTimes() {
+	int numChildren[MAX_TASKS];
+	int i, mostChildren = 0;
+
+	// Count children of each task
+	/*for (i = 0; i < MAX_TASKS; i++) {
+		numChildren[i] = 0;
+	}
+	for (i = 0; i < MAX_TASKS; i++) {
+		if (tcb[i].name && tcb[i].parent >= 0) {
+			numChildren[tcb[i].parent]++;
+		}
+	}
+
+	// Find task with most children
+	for (i = 0; i < MAX_TASKS; i++) {
+		if (numChildren[i] > numChildren[mostChildren]) {
+			mostChildren = i;
+		}
+	}*/
+
+	// Distribute CPU time
+	for (i = 0; i < MAX_TASKS; i++) {
+		if (tcb[i].name) {
+			tcb[i].time = 5;
+		}
+	}
+}
 
 
 
@@ -790,6 +835,9 @@ int createTask(char* name,						// task name
 
 			// Each task must have its own stack and stack pointer.
 			tcb[tid].stack = malloc(STACK_SIZE * sizeof(int));
+
+			// Start off with zero clock time
+			tcb[tid].time = 0;
 
 			// Insert task into "ready" queue
 			enQ(rq, tid, priority);
