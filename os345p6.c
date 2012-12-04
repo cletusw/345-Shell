@@ -1877,8 +1877,8 @@ int fmsWriteSector(void* buffer, int sectorNumber)
 
 
 // ***************************************************************************************
-// Take a FAT table index and return an unsigned short containing the 12-bit FAT entry code
 // ***************************************************************************************
+// Replace the 12-bit FAT entry code in the unsigned char FAT table at index
 void setFatEntry(int FATindex, unsigned short FAT12ClusEntryVal, unsigned char* FAT)
 {
 	int FATOffset = ((FATindex * 3) / 2);		// Calculate the offset
@@ -1901,8 +1901,8 @@ void setFatEntry(int FATindex, unsigned short FAT12ClusEntryVal, unsigned char* 
 
 
 // ***************************************************************************************
+// Take a FAT table index and return an unsigned short containing the 12-bit FAT entry code
 // ***************************************************************************************
-// Replace the 12-bit FAT entry code in the unsigned char FAT table at index
 unsigned short getFatEntry(int FATindex, unsigned char* FATtable)
 {
 	unsigned short FATEntryCode;    			// The return value

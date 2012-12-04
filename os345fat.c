@@ -230,8 +230,7 @@ int fmsOpenFile(char* fileName, int rwMode)
 //
 int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 {
-	// ?? add code here
-	printf("\nfmsReadFile Not Implemented");
+	FDEntry fdEntry = OFTable[fileDescriptor];
 
 	return ERR63;
 } // end fmsReadFile
