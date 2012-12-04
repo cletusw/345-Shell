@@ -225,6 +225,8 @@ int fmsOpenFile(char* fileName, int rwMode)
 // Return the number of bytes successfully read (if > 0) or return an error number.
 // (If you are already at the end of the file, return EOF error.  ie. you should never
 // return a 0.)
+// Return an error number for disc errors, invalid operation, or end of file
+// (no bytes to read)
 //
 int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 {
