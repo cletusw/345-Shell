@@ -178,10 +178,41 @@ int fmsDeleteFile(char* fileName)
 //
 int fmsOpenFile(char* fileName, int rwMode)
 {
-	// ?? add code here
-	printf("\nfmsOpenFile Not Implemented");
+	int i, errCode;
+	DirEntry dirEntry;
 
-	return ERR61;
+	// Get directory entry for fileName
+	errCode = fmsGetDirEntry(fileName, &dirEntry);
+
+	if (errCode != 0) {
+		return errCode;
+	}
+
+	// Store in Open File Table
+	for (i = 0; i < NFILES; i++) {
+		printf("\n%8s", OFTable[i].name);
+		if (!OFTable[i].name[0]) {
+			// Found open slot in Open File Table
+			memcpy(OFTable[i].name, dirEntry.name, 8 * sizeof(uint8));
+			memcpy(OFTable[i].extension, dirEntry.extension, 3 * sizeof(uint8));
+			OFTable[i].attributes = dirEntry.attributes;
+			OFTable[i].directoryCluster = CDIR;
+			OFTable[i].startCluster = dirEntry.startCluster;
+			OFTable[i].currentCluster = 0;
+			OFTable[i].fileSize = (rwMode == 1) ? 0 : dirEntry.fileSize;
+			OFTable[i].pid = curTask;
+			OFTable[i].mode = rwMode;
+			OFTable[i].flags = 0;
+			OFTable[i].fileIndex = (rwMode != 2) ? 0 : dirEntry.fileSize;
+
+			printFileDescriptor(&OFTable[i]);
+
+			return i;
+		}
+	}
+
+	// Too many files open
+	return ERR70;
 } // end fmsOpenFile
 
 
