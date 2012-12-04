@@ -190,7 +190,6 @@ int fmsOpenFile(char* fileName, int rwMode)
 
 	// Store in Open File Table
 	for (i = 0; i < NFILES; i++) {
-		printf("\n%8s", OFTable[i].name);
 		if (!OFTable[i].name[0]) {
 			// Found open slot in Open File Table
 			memcpy(OFTable[i].name, dirEntry.name, 8 * sizeof(uint8));
