@@ -80,6 +80,22 @@ extern TCB tcb[];							// task control block
 extern int curTask;							// current task #
 
 
+// Helper functions
+//
+void printFileDescriptor(FDEntry* fdEntry) {
+	printf("\n%.*s.%.*s", 8, fdEntry->name, 3, fdEntry->extension);
+	printf("\nattributes: 0x%x", fdEntry->attributes);
+	printf("\ndirectoryCluster: %d", fdEntry->directoryCluster);
+	printf("\nstartCluster: %d", fdEntry->startCluster);
+	printf("\ncurrentCluster: %d", fdEntry->currentCluster);
+	printf("\nfileSize: %d", fdEntry->fileSize);
+	printf("\npid: %d", fdEntry->pid);
+	printf("\nmode: %d", fdEntry->mode);
+	printf("\nflags: %x", fdEntry->flags);
+	printf("\nfileIndex: %x", fdEntry->fileIndex);
+}
+
+
 // ***********************************************************************
 // ***********************************************************************
 // This function closes the open file specified by fileDescriptor.
