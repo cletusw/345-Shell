@@ -178,8 +178,9 @@ int fmsDeleteFile(char* fileName)
 //
 int fmsOpenFile(char* fileName, int rwMode)
 {
-	int i, errCode;
+	int i, errCode, sector;
 	DirEntry dirEntry;
+	char temp[32];
 
 	// Get directory entry for fileName
 	errCode = fmsGetDirEntry(fileName, &dirEntry);
@@ -203,8 +204,15 @@ int fmsOpenFile(char* fileName, int rwMode)
 			OFTable[i].mode = rwMode;
 			OFTable[i].flags = 0;
 			OFTable[i].fileIndex = (rwMode != 2) ? 0 : dirEntry.fileSize;
+			sector = C_2_S(OFTable[i].startCluster);
+			errCode = fmsReadSector(OFTable[i].buffer, sector);
+			if (errCode) {
+				return errCode;
+			}
 
 			printFileDescriptor(&OFTable[i]);
+			sprintf(temp, "Sector %d:", sector);
+			dumpRAMDisk(temp, sector*512, sector*512 + 512);
 
 			return i;
 		}
