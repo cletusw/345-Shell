@@ -217,7 +217,7 @@ int P6_dfat(int argc, char* argv[])		// list FAT table
 	{
 		case 1:						//	1	fat					output fat 1 table
 		{
-			printFatEntries("FAT1", start, end);
+			printFatEntries(FAT1, start, end);
 		}
 
 		case 2:						//	2	fat <1 to 2>		output fat <#> table
