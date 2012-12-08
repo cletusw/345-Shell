@@ -264,7 +264,7 @@ int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 
 			// Check for EOF
 			if (nextCluster == FAT_EOC) {
-				return ERR66;
+				return nBytes;
 			}
 
 			fdEntry->currentCluster = nextCluster;
