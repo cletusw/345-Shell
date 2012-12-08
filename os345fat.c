@@ -80,6 +80,7 @@ extern TCB tcb[];							// task control block
 extern int curTask;							// current task #
 
 
+// ***********************************************************************
 // Helper functions
 //
 void printFileDescriptor(FDEntry* fdEntry) {
@@ -198,7 +199,7 @@ int fmsOpenFile(char* fileName, int rwMode)
 			OFTable[i].attributes = dirEntry.attributes;
 			OFTable[i].directoryCluster = CDIR;
 			OFTable[i].startCluster = dirEntry.startCluster;
-			OFTable[i].currentCluster = 0;
+			OFTable[i].currentCluster = dirEntry.startCluster;
 			OFTable[i].fileSize = (rwMode == 1) ? 0 : dirEntry.fileSize;
 			OFTable[i].pid = curTask;
 			OFTable[i].mode = rwMode;
@@ -238,9 +239,47 @@ int fmsOpenFile(char* fileName, int rwMode)
 //
 int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 {
-	FDEntry fdEntry = OFTable[fileDescriptor];
+	int bytesRead, sector, nextCluster, sectorOffset, bufferOffset = 0;
+	int errCode;
+	FDEntry* fdEntry = &OFTable[fileDescriptor];
 
-	return ERR63;
+	sectorOffset = fdEntry->fileIndex % BYTES_PER_SECTOR;
+	for (bytesRead = 0; bytesRead < nBytes; bytesRead++) {
+		buffer[bufferOffset] = fdEntry->buffer[sectorOffset];
+
+		// Check for EOF
+		if (buffer[bufferOffset] == EOF) {
+			return ERR66;
+		}
+
+		bufferOffset++;
+		fdEntry->fileIndex++;
+
+		// Increment sector offset
+		sectorOffset++;
+		if (sectorOffset >= BYTES_PER_SECTOR) {
+			sectorOffset = 0;
+
+			// Get next cluster number
+			nextCluster = getFatEntry(fdEntry->currentCluster, FAT1);
+
+			// Check for EOF
+			if (nextCluster == FAT_EOC) {
+				return ERR66;
+			}
+
+			fdEntry->currentCluster = nextCluster;
+
+			// Load new sector
+			sector = C_2_S(fdEntry->currentCluster);
+			errCode = fmsReadSector(fdEntry->buffer, sector);
+			if (errCode) {
+				return errCode;
+			}
+		}
+	}
+
+	return bytesRead;
 } // end fmsReadFile
 
 
