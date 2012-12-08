@@ -105,10 +105,9 @@ void printFileDescriptor(FDEntry* fdEntry) {
 //
 int fmsCloseFile(int fileDescriptor)
 {
-	// ?? add code here
-	printf("\nfmsCloseFile Not Implemented");
+	OFTable[fileDescriptor].name[0] = 0;
 
-	return ERR63;
+	return 0;
 } // end fmsCloseFile
 
 
