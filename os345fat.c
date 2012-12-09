@@ -108,10 +108,7 @@ int incFileIndex(FDEntry* fdEntry) {
 
 	fdEntry->fileIndex++;
 
-	if (fdEntry->fileIndex >= fdEntry->fileSize) {
-		return ERR66;	// End of file
-	}
-	else if (fdEntry->fileIndex % BYTES_PER_SECTOR == 0) {
+	if (fdEntry->fileIndex % BYTES_PER_SECTOR == 0) {
 		// Get next cluster number
 		nextCluster = getFatEntry(fdEntry->currentCluster, FAT1);
 
@@ -296,7 +293,10 @@ int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 		// Increment fileIndex
 		errorCode = incFileIndex(fdEntry);
 
-		if (errorCode) {
+		if (errorCode == ERR66 && bytesRead > 0) {
+			return bytesRead;
+		}
+		else if (errorCode) {
 			return errorCode;
 		}
 	}
@@ -335,8 +335,22 @@ int fmsSeekFile(int fileDescriptor, int index)
 //
 int fmsWriteFile(int fileDescriptor, char* buffer, int nBytes)
 {
-	// ?? add code here
-	printf("\nfmsWriteFile Not Implemented");
+	int bytesWritten;
+	int errorCode;
+	FDEntry* fdEntry = &OFTable[fileDescriptor];
 
-	return ERR63;
+	for (bytesWritten = 0; bytesWritten < nBytes; bytesWritten++) {
+		fdEntry->buffer[fdEntry->fileIndex % BYTES_PER_SECTOR] = *buffer;
+		buffer++;
+		bytesWritten++;
+
+		// Increment fileIndex
+		errorCode = incFileIndex(fdEntry);
+
+		if (errorCode) {
+			return errorCode;
+		}
+	}
+
+	return bytesWritten;
 } // end fmsWriteFile
