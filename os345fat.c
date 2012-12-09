@@ -102,9 +102,21 @@ void writeOutBuffer(FDEntry* fdEntry) {
 	}
 }
 
+unsigned short getFreeCluster() {
+	int i;
+
+	for (i = 2; i < NUM_FAT_SECTORS * BYTES_PER_SECTOR; i++) {
+		if (getFatEntry(i, FAT1) == 0) {
+			return i;
+		}
+	}
+
+	return ERR65;	// File Space Full
+}
+
 // Return 0 for success; otherwise, return the error number.
 int incFileIndex(FDEntry* fdEntry) {
-	int sector, nextCluster;
+	unsigned short sector, nextCluster;
 
 	fdEntry->fileIndex++;
 
@@ -113,7 +125,13 @@ int incFileIndex(FDEntry* fdEntry) {
 		nextCluster = getFatEntry(fdEntry->currentCluster, FAT1);
 
 		if (nextCluster == FAT_EOC) {
-			return ERR66;	// End of file
+			if (fdEntry->mode == OPEN_READ) {
+				return ERR66;	// End of file
+			}
+			else {
+				nextCluster = getFreeCluster();
+				setFatEntry(fdEntry->currentCluster, nextCluster, FAT1);
+			}
 		}
 
 		// Load new sector into buffer
