@@ -97,7 +97,9 @@ void printFileDescriptor(FDEntry* fdEntry) {
 }
 
 void writeOutBuffer(FDEntry* fdEntry) {
-	
+	if (fdEntry->mode != OPEN_READ) {
+		fmsWriteSector(fdEntry->buffer, C_2_S(fdEntry->currentCluster));
+	}
 }
 
 // Return 0 for success; otherwise, return the error number.
