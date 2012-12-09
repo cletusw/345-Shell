@@ -243,9 +243,9 @@ int fmsOpenFile(char* fileName, int rwMode)
 				return errCode;
 			}
 
-			printFileDescriptor(&OFTable[i]);
-			sprintf(temp, "Sector %d:", sector);
-			dumpRAMDisk(temp, sector*512, sector*512 + 512);
+			//printFileDescriptor(&OFTable[i]);
+			//sprintf(temp, "Sector %d:", sector);
+			//dumpRAMDisk(temp, sector*512, sector*512 + 512);
 
 			return i;
 		}
