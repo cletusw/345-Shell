@@ -96,6 +96,33 @@ void printFileDescriptor(FDEntry* fdEntry) {
 	printf("\nfileIndex: %x", fdEntry->fileIndex);
 }
 
+// Return 0 for success; otherwise, return the error number.
+int incFileIndex(FDEntry* fdEntry) {
+	int sector, nextCluster;
+
+	fdEntry->fileIndex++;
+
+	if (fdEntry->fileIndex >= fdEntry->fileSize) {
+		return ERR66;	// End of file
+	}
+	else if (fdEntry->fileIndex % BYTES_PER_SECTOR == 0) {
+		// Get next cluster number
+		nextCluster = getFatEntry(fdEntry->currentCluster, FAT1);
+
+		if (nextCluster == FAT_EOC) {
+			return ERR66;	// End of file
+		}
+
+		// Load new sector into buffer
+		fdEntry->currentCluster = nextCluster;
+		sector = C_2_S(nextCluster);
+		return fmsReadSector(fdEntry->buffer, sector);
+	}
+	else {
+		return 0;
+	}
+}
+
 
 // ***********************************************************************
 // ***********************************************************************
@@ -238,43 +265,30 @@ int fmsOpenFile(char* fileName, int rwMode)
 //
 int fmsReadFile(int fileDescriptor, char* buffer, int nBytes)
 {
-	int bytesRead, sector, nextCluster, sectorOffset, bufferOffset = 0;
-	int errCode;
+	int bytesRead, bufferOffset = 0;
+	int errorCode;
 	FDEntry* fdEntry = &OFTable[fileDescriptor];
 
-	sectorOffset = fdEntry->fileIndex % BYTES_PER_SECTOR;
-	for (bytesRead = 0; bytesRead < nBytes; bytesRead++) {
-		buffer[bufferOffset] = fdEntry->buffer[sectorOffset];
+	if (fdEntry->fileIndex >= fdEntry->fileSize) {
+		return ERR66;	// End of file
+	}
+
+	for (bytesRead = 0; bytesRead < nBytes; ) {
+		buffer[bufferOffset] = fdEntry->buffer[fdEntry->fileIndex % BYTES_PER_SECTOR];
 
 		// Check for EOF
 		if (buffer[bufferOffset] == EOF) {
-			return ERR66;
+			return (bytesRead > 0) ? bytesRead : ERR66;		// End of file
 		}
 
+		bytesRead++;
 		bufferOffset++;
-		fdEntry->fileIndex++;
 
-		// Increment sector offset
-		sectorOffset++;
-		if (sectorOffset >= BYTES_PER_SECTOR) {
-			sectorOffset = 0;
+		// Increment fileIndex
+		errorCode = incFileIndex(fdEntry);
 
-			// Get next cluster number
-			nextCluster = getFatEntry(fdEntry->currentCluster, FAT1);
-
-			// Check for EOF
-			if (nextCluster == FAT_EOC) {
-				return nBytes;
-			}
-
-			fdEntry->currentCluster = nextCluster;
-
-			// Load new sector
-			sector = C_2_S(fdEntry->currentCluster);
-			errCode = fmsReadSector(fdEntry->buffer, sector);
-			if (errCode) {
-				return errCode;
-			}
+		if (errorCode) {
+			return errorCode;
 		}
 	}
 
