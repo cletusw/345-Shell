@@ -96,6 +96,10 @@ void printFileDescriptor(FDEntry* fdEntry) {
 	printf("\nfileIndex: %x", fdEntry->fileIndex);
 }
 
+void writeOutBuffer(FDEntry* fdEntry) {
+	
+}
+
 // Return 0 for success; otherwise, return the error number.
 int incFileIndex(FDEntry* fdEntry) {
 	int sector, nextCluster;
@@ -114,6 +118,7 @@ int incFileIndex(FDEntry* fdEntry) {
 		}
 
 		// Load new sector into buffer
+		writeOutBuffer(fdEntry);
 		fdEntry->currentCluster = nextCluster;
 		sector = C_2_S(nextCluster);
 		return fmsReadSector(fdEntry->buffer, sector);
@@ -132,6 +137,8 @@ int incFileIndex(FDEntry* fdEntry) {
 //
 int fmsCloseFile(int fileDescriptor)
 {
+	writeOutBuffer(&OFTable[fileDescriptor]);
+
 	OFTable[fileDescriptor].name[0] = 0;
 
 	return 0;
